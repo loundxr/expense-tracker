@@ -1,0 +1,17 @@
+version: "3"
+
+silent: true
+
+env:
+  PROJECT_ROOT: '{{.TASKFILE_DIR}}'
+
+tasks:
+  run:
+    desc: "Run the expense-tracker app"
+    cmds:
+      - go run cmd/expense-tracker/main.go
+  
+  compose-up:
+    desc: "Run docker-compose up"
+    cmds:
+      - docker compose -f docker-compose.yaml up -d

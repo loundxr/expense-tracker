@@ -35,7 +35,7 @@ The project follows a **Layered Architecture** pattern:
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/expense-tracker.git
+   git clone https://github.com/loundxr/expense-tracker.git
    ```
 2. Set up your environment variables in `.env` (refer to `.env.example`).
 3. Spin up the infrastructure:

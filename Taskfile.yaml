@@ -46,7 +46,7 @@ tasks:
     internal: true
     cmds:
       - |
-        docker compose run --rm  migrate\
+        docker compose run --rm  expense-tracker-postgres-migrate \
         -path=/migrations \
         -database "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable" \
         {{.ACTION}}
@@ -61,12 +61,15 @@ tasks:
   migrate-down:
     desc: "Rollback the last migration"
     cmds:
-      # - echo "y" | task: migrate
-      #   vars:
-      #     ACTION: "down 1"
       - task: migrate
         vars:
           ACTION: "down 1"
+
+  migrate-force:
+      cmds:
+        - task: migrate
+          vars:
+            ACTION: "force {{.CLI_ARGS}}"
 
   migrate-version:
     desc: "Show the current migration version"
@@ -79,9 +82,9 @@ tasks:
     desc: "Create a new migration file"
     cmds:
       - |
-        @if [ -z "{{.seq}}" ]; then \
+        if [ -z "{{.seq}}" ]; then \
           echo "Please provide a migration name using seq variable \
           Use: task migrate-create seq=your_migration_seq"; \
           exit 1; \
         fi
-        docker compose run --rm migrate create -ext sql -dir /migrations -seq {{.seq}}
+        docker compose run --rm expense-tracker-postgres-migrate create -ext sql -dir /migrations -seq {{.seq}}

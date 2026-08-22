@@ -1,0 +1,90 @@
+version: "3"
+
+silent: true
+
+dotenv: [".env"]
+
+vars:
+  APP_NAME: "expense-tracker"
+  MAIN_PATH: "./cmd/{{.APP_NAME}}"    
+  
+env:
+  PROJECT_ROOT: '{{.TASKFILE_DIR}}'
+
+tasks:
+  dev:
+    desc: "Run the app locally with Docker infrastructure"
+    deps: [env-up]
+    env:
+      POSTGRES_HOST: "localhost"
+      REDIS_HOST: "localhost"
+      POSTGRES_PORT: "5432"
+      REDIS_PORT: "6379"
+    cmds:
+      - go run {{.MAIN_PATH}}/main.go
+  
+  # --- docker-compose ---
+  env-up:
+    desc: "Run Postgres and Redis containers"
+    cmds:
+      - docker compose -f docker-compose.yaml up -d expense-tracker-postgres expense-tracker-cache
+    status:
+      - docker compose ps | grep -q "Up"
+
+  env-down:
+    desc: "Stop Postgres and Redis containers"
+    cmds:
+      - docker compose down
+  
+  compose-up:
+    desc: "Run docker-compose up"
+    cmds:
+      - docker compose -f docker-compose.yaml up -d
+
+  # --- migrations ---
+  migrate:
+    internal: true
+    cmds:
+      - |
+        docker compose run --rm  expense-tracker-postgres-migrate \
+        -path=/migrations \
+        -database "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable" \
+        {{.ACTION}}
+  
+  migrate-up:
+    desc: "Apply all the up migrations"
+    cmds:
+      - task: migrate
+        vars:
+          ACTION: "up"
+
+  migrate-down:
+    desc: "Rollback the last migration"
+    cmds:
+      - task: migrate
+        vars:
+          ACTION: "down 1"
+
+  migrate-force:
+      cmds:
+        - task: migrate
+          vars:
+            ACTION: "force {{.CLI_ARGS}}"
+
+  migrate-version:
+    desc: "Show the current migration version"
+    cmds:
+      - task: migrate
+        vars:
+          ACTION: "version"
+
+  migrate-create:
+    desc: "Create a new migration file"
+    cmds:
+      - |
+        if [ -z "{{.seq}}" ]; then \
+          echo "Please provide a migration name using seq variable \
+          Use: task migrate-create seq=your_migration_seq"; \
+          exit 1; \
+        fi
+        docker compose run --rm expense-tracker-postgres-migrate create -ext sql -dir /migrations -seq {{.seq}}

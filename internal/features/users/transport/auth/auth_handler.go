@@ -2,15 +2,15 @@ package users_transport_http_auth
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/go-chi/chi"
 	"github.com/loundxr/expense-tracker/internal/core/domain"
-	core_logger "github.com/loundxr/expense-tracker/internal/core/logger"
 )
 
 type AuthHandler struct {
 	authService AuthService
-	logger      *core_logger.Logger
+	logger      *slog.Logger
 }
 
 type AuthService interface {
@@ -18,7 +18,7 @@ type AuthService interface {
 	SignIn(ctx context.Context, email, password string) (string, error)
 }
 
-func NewAuthHandler(service AuthService, logger *core_logger.Logger) *AuthHandler {
+func NewAuthHandler(service AuthService, logger *slog.Logger) *AuthHandler {
 	return &AuthHandler{
 		authService: service,
 		logger:      logger,

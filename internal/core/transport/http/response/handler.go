@@ -2,17 +2,16 @@ package core_http_response
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
-
-	core_logger "github.com/loundxr/expense-tracker/internal/core/logger"
 )
 
 type HTTPResponseHandler struct {
-	log *core_logger.Logger
+	log *slog.Logger
 	w   http.ResponseWriter
 }
 
-func NewHTTPResponseHandler(w http.ResponseWriter, log *core_logger.Logger) *HTTPResponseHandler {
+func NewHTTPResponseHandler(w http.ResponseWriter, log *slog.Logger) *HTTPResponseHandler {
 	return &HTTPResponseHandler{
 		log: log,
 		w:   w,

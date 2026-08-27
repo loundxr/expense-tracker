@@ -16,7 +16,7 @@ type Config struct {
 	Timeout  time.Duration `envconfig:"TIMEOUT" default:"10s"`
 }
 
-func New() (Config, error) {
+func NewConfig() (Config, error) {
 	var cfg Config
 
 	if err := envconfig.Process("POSTGRES", &cfg); err != nil {
@@ -24,11 +24,4 @@ func New() (Config, error) {
 	}
 
 	return cfg, nil
-}
-
-func ConfigMust(val Config, err error) Config {
-	if err != nil {
-		panic(err)
-	}
-	return val
 }

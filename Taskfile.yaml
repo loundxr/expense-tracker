@@ -17,7 +17,7 @@ tasks:
     desc: "Run the app locally with Docker infrastructure"
     deps: [env-up]
     env:
-      LOCAL_LOG_PATH: "{{.LOG_DIR}}/app.log"
+      LOCAL_LOG_DIR: "{{.LOG_DIR}}"
       POSTGRES_HOST: "localhost"
       REDIS_HOST: "localhost"
       POSTGRES_PORT: "5432"

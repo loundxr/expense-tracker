@@ -1,4 +1,4 @@
-package users_transport_http_auth
+package auth_transport_http
 
 import (
 	"net/http"

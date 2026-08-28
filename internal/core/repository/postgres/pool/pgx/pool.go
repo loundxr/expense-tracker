@@ -20,7 +20,7 @@ func New(ctx context.Context, cfg Config) (*Pool, error) {
 		cfg.User,
 		cfg.Password,
 		cfg.Host,
-		cfg.Password,
+		cfg.Port,
 		cfg.Database,
 	)
 

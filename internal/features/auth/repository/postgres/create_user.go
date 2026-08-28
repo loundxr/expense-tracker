@@ -1,11 +1,10 @@
-package users_repository_postgres_auth
+package auth_postgres_repository
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/loundxr/expense-tracker/internal/core/domain"
-	users_postgres_repository "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
 )
 
 func (r *UsersAuthRepository) CreateUser(
@@ -23,7 +22,7 @@ func (r *UsersAuthRepository) CreateUser(
 
 	row := r.pool.QueryRow(ctx, query, user.Email, user.PasswordHash, user.CreatedAt)
 
-	var um users_postgres_repository.UserModel
+	var um UserModel
 	err := row.Scan(
 		&um.ID,
 		&um.Version,

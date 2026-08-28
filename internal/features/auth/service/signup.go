@@ -1,4 +1,4 @@
-package users_service_auth
+package auth_service
 
 import (
 	"context"

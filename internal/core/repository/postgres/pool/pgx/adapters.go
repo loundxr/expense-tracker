@@ -22,7 +22,7 @@ type pgconnCommandTag struct {
 }
 
 func (r pgxRow) Scan(dest ...any) error {
-	if err := r.Scan(dest...); err != nil {
+	if err := r.Row.Scan(dest...); err != nil {
 		return mapErrors(err)
 	}
 	return nil

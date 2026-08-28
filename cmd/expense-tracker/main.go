@@ -55,11 +55,13 @@ func main() {
 	defer cache.Close()
 	logger.Info("redis connection established")
 
+	// auth feature initialization
 	logger.Debug("initializing feature auth", slog.String("feature", "auth"))
 	authRepo := auth_postgres_repository.NewUsersAuthRepository(pool)
 	authSvc := auth_service.NewUsersAuthService(authRepo, logger)
 	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
 
+	// http server initialization
 	logger.Debug("initializing HTTP server")
 	httpConfig := utils.Must(core_http_server.NewConfig())
 	httpServer := core_http_server.NewHTTPServer(

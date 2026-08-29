@@ -1,9 +1,10 @@
 package core_postgres_pool
 
-import "fmt"
+import "errors"
 
 var (
-	ErrNotFound           = fmt.Errorf("not found")
-	ErrViolatesForeignKey = fmt.Errorf("violates foreign key")
-	ErrUnknown            = fmt.Errorf("unknown error")
+	ErrNotFound                 = errors.New("not found")
+	ErrViolatesForeignKey       = errors.New("violates foreign key")
+	ErrUnknown                  = errors.New("unknown error")
+	ErrViolatesUniqueConstraint = errors.New("violates unique constraint")
 )

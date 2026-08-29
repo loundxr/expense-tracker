@@ -2,9 +2,12 @@ package auth_postgres_repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/loundxr/expense-tracker/internal/core/domain"
+	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
+	core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 )
 
 func (r *UsersAuthRepository) CreateUser(
@@ -32,7 +35,14 @@ func (r *UsersAuthRepository) CreateUser(
 	)
 
 	if err != nil {
-		return domain.User{}, fmt.Errorf("scan from returned row: %w", err)
+		if errors.Is(err, core_postgres_pool.ErrViolatesUniqueConstraint) {
+			return domain.User{}, fmt.Errorf(
+				"%s: scan from returned row: %w",
+				op,
+				core_errors.ErrAlreadyExists,
+			)
+		}
+		return domain.User{}, fmt.Errorf("%s: scan from returned row: %w", op, err)
 	}
 
 	userDomain := domain.NewUser(

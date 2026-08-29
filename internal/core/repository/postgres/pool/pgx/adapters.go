@@ -29,7 +29,10 @@ func (r pgxRow) Scan(dest ...any) error {
 }
 
 func mapErrors(err error) error {
-	const pgxViolatesForeignKeyErrorCode = "23503"
+	const (
+		pgxViolatesForeignKeyErrorCode       = "23503"
+		pgxViolatesUniqueConstraintErrorCode = "23505"
+	)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return core_postgres_pool.ErrNotFound
@@ -37,8 +40,13 @@ func mapErrors(err error) error {
 
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
-		if pgErr.Code == pgxViolatesForeignKeyErrorCode {
+		switch pgErr.Code {
+		case pgxViolatesForeignKeyErrorCode:
 			return fmt.Errorf("%v: %w", err, core_postgres_pool.ErrViolatesForeignKey)
+		case pgxViolatesUniqueConstraintErrorCode:
+			return fmt.Errorf("%v: %w", err, core_postgres_pool.ErrViolatesUniqueConstraint)
+		}
+		if pgErr.Code == pgxViolatesForeignKeyErrorCode {
 		}
 	}
 

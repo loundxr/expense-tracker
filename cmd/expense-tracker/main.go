@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"log/slog"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	core_jwt "github.com/loundxr/expense-tracker/internal/core/auth/jwt"
 	core_cache_redis "github.com/loundxr/expense-tracker/internal/core/cache/redis"
 	core_logger "github.com/loundxr/expense-tracker/internal/core/logger"
 	core_pgx_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool/pgx"
@@ -58,7 +58,7 @@ func main() {
 	// auth feature initialization
 	logger.Debug("initializing feature auth", slog.String("feature", "auth"))
 	authRepo := auth_postgres_repository.NewUsersAuthRepository(pool)
-	authSvc := auth_service.NewUsersAuthService(authRepo, logger)
+	authSvc := auth_service.NewUsersAuthService(authRepo, logger, utils.Must(core_jwt.NewConfig()))
 	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
 
 	// http server initialization
@@ -70,11 +70,7 @@ func main() {
 	)
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.APIVersion1)
-	apiVersionRouter.RegisterRoutes(core_http_server.Route{
-		Method:  http.MethodPost,
-		Path:    "/auth/signup",
-		Handler: authHandler.SignUp,
-	})
+	authHandler.RegisterRoutes(apiVersionRouter.Router())
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
 	if err := httpServer.Run(ctx); err != nil {

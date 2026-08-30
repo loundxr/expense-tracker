@@ -4,10 +4,10 @@ import "time"
 
 type User struct {
 	ID           int
+	Version      int
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time
-	Version      int
 }
 
 func NewUser(

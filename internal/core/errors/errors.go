@@ -7,4 +7,5 @@ var (
 	ErrAlreadyExists   = errors.New("entity already exists")
 	ErrConflict        = errors.New("conflict")
 	ErrNotFound        = errors.New("not found")
+	ErrUnauthorized    = errors.New("unauthorized")
 )

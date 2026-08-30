@@ -45,12 +45,11 @@ func (r *UsersAuthRepository) CreateUser(
 		return domain.User{}, fmt.Errorf("%s: scan from returned row: %w", op, err)
 	}
 
-	userDomain := domain.NewUser(
+	return domain.NewUser(
 		um.ID,
 		um.Version,
 		um.Email,
 		um.PasswordHash,
 		um.CreatedAt,
-	)
-	return userDomain, nil
+	), nil
 }

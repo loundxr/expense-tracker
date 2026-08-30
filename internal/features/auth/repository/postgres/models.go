@@ -8,4 +8,5 @@ type UserModel struct {
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time
+	Role         string
 }

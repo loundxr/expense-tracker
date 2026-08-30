@@ -8,7 +8,13 @@ type User struct {
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time
+	Role         string
 }
+
+const (
+	RoleUser  = "user"
+	RoleAdmin = "admin"
+)
 
 func NewUser(
 	id int,
@@ -16,6 +22,7 @@ func NewUser(
 	email string,
 	passwordHash string,
 	createdAt time.Time,
+	role string,
 ) User {
 	return User{
 		ID:           id,
@@ -23,6 +30,7 @@ func NewUser(
 		Email:        email,
 		PasswordHash: passwordHash,
 		CreatedAt:    createdAt,
+		Role:         role,
 	}
 }
 
@@ -33,5 +41,6 @@ func NewUninitializedUser(email string, hash string) User {
 		CreatedAt:    time.Now(),
 		Version:      uninitialiedVersion,
 		ID:           uninitializedID,
+		Role:         uninitializedRole,
 	}
 }

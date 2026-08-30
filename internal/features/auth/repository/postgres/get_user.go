@@ -16,7 +16,7 @@ func (r *UsersAuthRepository) GetUserByEmail(
 	defer cancel()
 
 	query := `
-	SELECT id, version, email, password_hash, created_at
+	SELECT id, version, email, password_hash, created_at, role
 	FROM expense_tracker.users
 	WHERE email = $1`
 
@@ -29,6 +29,7 @@ func (r *UsersAuthRepository) GetUserByEmail(
 		&um.Email,
 		&um.PasswordHash,
 		&um.CreatedAt,
+		&um.Role,
 	)
 
 	if err != nil {
@@ -41,5 +42,6 @@ func (r *UsersAuthRepository) GetUserByEmail(
 		um.Email,
 		um.PasswordHash,
 		um.CreatedAt,
+		um.Role,
 	), nil
 }

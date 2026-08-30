@@ -21,7 +21,7 @@ func (r *UsersAuthRepository) CreateUser(
 	query := `
 	INSERT INTO expense_tracker.users (email, password_hash, created_at)
 	VALUES($1, $2, $3)
-	RETURNING id, version, email, password_hash, created_at;`
+	RETURNING id, version, email, password_hash, created_at, role;`
 
 	row := r.pool.QueryRow(ctx, query, user.Email, user.PasswordHash, user.CreatedAt)
 
@@ -32,6 +32,7 @@ func (r *UsersAuthRepository) CreateUser(
 		&um.Email,
 		&um.PasswordHash,
 		&um.CreatedAt,
+		&um.Role,
 	)
 
 	if err != nil {
@@ -51,5 +52,6 @@ func (r *UsersAuthRepository) CreateUser(
 		um.Email,
 		um.PasswordHash,
 		um.CreatedAt,
+		um.Role,
 	), nil
 }

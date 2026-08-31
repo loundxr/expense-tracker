@@ -15,6 +15,7 @@ type UsersService struct {
 type UsersRepository interface {
 	GetUsers(ctx context.Context, limit *int, offset *int) ([]domain.User, error)
 	GetUserByID(ctx context.Context, id int) (domain.User, error)
+	DeleteUser(ctx context.Context, id int) error
 }
 
 func NewUsersService(ur UsersRepository, l *slog.Logger) *UsersService {

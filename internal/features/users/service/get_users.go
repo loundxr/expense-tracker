@@ -39,6 +39,9 @@ func (s *UsersService) GetUsers(ctx context.Context, limit *int, offset *int) ([
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	s.logger.Debug("admin accessed the users list", slog.Int("id", core_ctx.GetUserID(ctx)))
+	s.logger.Info(
+		"users list fetched by admin",
+		slog.Int("actor_id", core_ctx.GetUserID(ctx)),
+	)
 	return users, nil
 }

@@ -13,7 +13,7 @@ func (r *UsersRepository) GetUsers(ctx context.Context, limit, offset *int) ([]d
 	defer cancel()
 
 	query := `
-	SELECT id, version, email, password_hash, created_at, role
+	SELECT id, version, email, created_at, role
 	FROM expense_tracker.users
 	ORDER BY id ASC
 	LIMIT $1
@@ -32,7 +32,6 @@ func (r *UsersRepository) GetUsers(ctx context.Context, limit, offset *int) ([]d
 			&um.ID,
 			&um.Version,
 			&um.Email,
-			&um.PasswordHash,
 			&um.CreatedAt,
 			&um.Role,
 		)

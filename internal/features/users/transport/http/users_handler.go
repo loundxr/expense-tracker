@@ -16,6 +16,7 @@ type UserHTTPHandler struct {
 
 type UserService interface {
 	GetUsers(ctx context.Context, limit *int, offset *int) ([]domain.User, error)
+	GetUser(ctx context.Context, id int) (domain.User, error)
 }
 
 func NewUserHTTPHandler(us UserService, l *slog.Logger) *UserHTTPHandler {
@@ -28,6 +29,7 @@ func NewUserHTTPHandler(us UserService, l *slog.Logger) *UserHTTPHandler {
 func (h *UserHTTPHandler) RegisterRoutes(r chi.Router) {
 	r.Route("/users", func(r chi.Router) {
 		// GetUser
+		r.Get("/{id}", h.GetUser)
 		// DeleteUser
 		// PatchUser
 

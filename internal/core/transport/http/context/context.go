@@ -1,4 +1,4 @@
-package core_http_context
+package core_ctx
 
 import "context"
 
@@ -26,6 +26,6 @@ func SetUserRole(ctx context.Context, role string) context.Context {
 }
 
 func GetUserRole(ctx context.Context) string {
-	role := ctx.Value(userRoleKey).(string)
+	role, _ := ctx.Value(userRoleKey).(string)
 	return role
 }

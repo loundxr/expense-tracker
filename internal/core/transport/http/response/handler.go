@@ -40,6 +40,8 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 		statusCode = http.StatusConflict
 	case errors.Is(err, core_errors.ErrNotFound):
 		statusCode = http.StatusNotFound
+	case errors.Is(err, core_errors.ErrForbidden):
+		statusCode = http.StatusForbidden
 	default:
 		statusCode = http.StatusInternalServerError
 	}

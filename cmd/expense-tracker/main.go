@@ -7,14 +7,19 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/go-chi/chi/v5"
 	core_jwt "github.com/loundxr/expense-tracker/internal/core/auth/jwt"
 	core_cache_redis "github.com/loundxr/expense-tracker/internal/core/cache/redis"
 	core_logger "github.com/loundxr/expense-tracker/internal/core/logger"
 	core_pgx_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool/pgx"
+	core_http_middleware "github.com/loundxr/expense-tracker/internal/core/transport/http/middleware"
 	core_http_server "github.com/loundxr/expense-tracker/internal/core/transport/http/server"
 	auth_postgres_repository "github.com/loundxr/expense-tracker/internal/features/auth/repository/postgres"
 	auth_service "github.com/loundxr/expense-tracker/internal/features/auth/service"
 	auth_transport_http "github.com/loundxr/expense-tracker/internal/features/auth/transport/http"
+	users_postgres_repository "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
+	users_service "github.com/loundxr/expense-tracker/internal/features/users/service"
+	users_transport_http "github.com/loundxr/expense-tracker/internal/features/users/transport/http"
 	"github.com/loundxr/expense-tracker/internal/utils"
 )
 
@@ -57,9 +62,16 @@ func main() {
 
 	// auth feature initialization
 	logger.Debug("initializing feature auth", slog.String("feature", "auth"))
+	jwtCfg := utils.Must(core_jwt.NewConfig())
 	authRepo := auth_postgres_repository.NewUsersAuthRepository(pool)
-	authSvc := auth_service.NewUsersAuthService(authRepo, logger, utils.Must(core_jwt.NewConfig()))
+	authSvc := auth_service.NewUsersAuthService(authRepo, logger, jwtCfg)
 	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
+
+	// users feature initialization
+	logger.Debug("initializing feature users", slog.String("feature", "users"))
+	usersRepo := users_postgres_repository.NewUsersRepository(pool)
+	usersSvc := users_service.NewUsersService(usersRepo, logger)
+	usersHandler := users_transport_http.NewUserHTTPHandler(usersSvc, logger)
 
 	// http server initialization
 	logger.Debug("initializing HTTP server")
@@ -71,6 +83,10 @@ func main() {
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.APIVersion1)
 	authHandler.RegisterRoutes(apiVersionRouter.Router())
+	apiVersionRouter.Router().Group(func(r chi.Router) {
+		r.Use(core_http_middleware.Auth(jwtCfg.Secret, logger))
+		usersHandler.RegisterRoutes(r)
+	})
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
 	if err := httpServer.Run(ctx); err != nil {

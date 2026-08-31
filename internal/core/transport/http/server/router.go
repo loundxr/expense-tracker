@@ -41,3 +41,7 @@ func (r *APIVersionRouter) RegisterRoutes(routes ...Route) {
 func (r *APIVersionRouter) Router() chi.Router {
 	return r.router
 }
+
+func (r *APIVersionRouter) Group(fn func(chi.Router)) {
+	r.router.Group(fn)
+}

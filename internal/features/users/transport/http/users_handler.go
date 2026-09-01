@@ -18,6 +18,7 @@ type UserService interface {
 	GetUsers(ctx context.Context, limit *int, offset *int) ([]domain.User, error)
 	GetUser(ctx context.Context, id int) (domain.User, error)
 	DeleteUser(ctx context.Context, id int) error
+	PatchUser(ctx context.Context, id int, patch domain.UserPatch) (domain.User, error)
 }
 
 func NewUserHTTPHandler(us UserService, l *slog.Logger) *UserHTTPHandler {
@@ -34,6 +35,7 @@ func (h *UserHTTPHandler) RegisterRoutes(r chi.Router) {
 		// DeleteUser
 		r.Delete("/{id}", h.DeleteUser)
 		// PatchUser
+		r.Patch("/{id}", h.PatchUser)
 
 		r.Group(func(r chi.Router) {
 			r.Use(core_http_middleware.AdminOnly(h.logger))

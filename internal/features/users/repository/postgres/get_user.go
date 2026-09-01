@@ -16,7 +16,7 @@ func (r *UsersRepository) GetUserByID(ctx context.Context, id int) (domain.User,
 	defer cancel()
 
 	query := `
-	SELECT id, version, email, created_at, role
+	SELECT id, version, email, password_hash, created_at, role
 	FROM expense_tracker.users
 	WHERE id = $1`
 	row := r.pool.QueryRow(ctx, query, id)
@@ -26,6 +26,7 @@ func (r *UsersRepository) GetUserByID(ctx context.Context, id int) (domain.User,
 		&um.ID,
 		&um.Version,
 		&um.Email,
+		&um.PasswordHash,
 		&um.CreatedAt,
 		&um.Role,
 	)

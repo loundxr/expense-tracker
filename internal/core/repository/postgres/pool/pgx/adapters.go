@@ -46,8 +46,6 @@ func mapErrors(err error) error {
 		case pgxViolatesUniqueConstraintErrorCode:
 			return fmt.Errorf("%v: %w", err, core_postgres_pool.ErrViolatesUniqueConstraint)
 		}
-		if pgErr.Code == pgxViolatesForeignKeyErrorCode {
-		}
 	}
 
 	return fmt.Errorf("%v: %w", err, core_postgres_pool.ErrUnknown)

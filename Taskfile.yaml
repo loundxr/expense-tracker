@@ -6,7 +6,8 @@ dotenv: [".env"]
 
 vars:
   APP_NAME: "expense-tracker"
-  MAIN_PATH: "./cmd/{{.APP_NAME}}"    
+  MAIN_PATH: "./cmd/{{.APP_NAME}}"   
+  LOG_DIR: "./out/logs" 
   
 env:
   PROJECT_ROOT: '{{.TASKFILE_DIR}}'
@@ -16,11 +17,13 @@ tasks:
     desc: "Run the app locally with Docker infrastructure"
     deps: [env-up]
     env:
+      LOCAL_LOG_DIR: "{{.LOG_DIR}}"
       POSTGRES_HOST: "localhost"
       REDIS_HOST: "localhost"
       POSTGRES_PORT: "5432"
       REDIS_PORT: "6379"
     cmds:
+      - mkdir -p {{.LOG_DIR}}
       - go run {{.MAIN_PATH}}/main.go
   
   # --- docker-compose ---

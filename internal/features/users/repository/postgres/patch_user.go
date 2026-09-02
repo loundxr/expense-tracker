@@ -20,15 +20,16 @@ func (r *UsersRepository) PatchUser(ctx context.Context, id int, u domain.User) 
 	SET
 		email=$1,
 		password_hash=$2,
+		role=$3,
 		version=version+1
 	WHERE
-		id=$3 AND version=$4
+		id=$4 AND version=$5
 	RETURNING
 		id, version, email, created_at, role`
 
 	var um UserModel
 
-	row := r.pool.QueryRow(ctx, query, u.Email, u.PasswordHash, u.ID, u.Version)
+	row := r.pool.QueryRow(ctx, query, u.Email, u.PasswordHash, u.Role, u.ID, u.Version)
 	err := row.Scan(
 		&um.ID,
 		&um.Version,

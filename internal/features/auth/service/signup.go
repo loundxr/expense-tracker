@@ -28,15 +28,9 @@ func (s *UsersAuthService) SignUp(ctx context.Context, email, password string) (
 
 	userDomain, err := s.usersRepository.CreateUser(ctx, uninitUser)
 	if err != nil {
-		// TODO: check for ErrUserAlreadyExists
 		if errors.Is(err, core_errors.ErrAlreadyExists) {
 			return domain.User{}, fmt.Errorf("%s: %w", op, err)
 		}
-		// s.logger.Error(
-		// 	"unexpected error during signup",
-		// 	slog.String("error", err.Error()),
-		// 	slog.String("op", op),
-		// )
 		return domain.User{}, fmt.Errorf("failed to create user: %s: %w", op, err)
 	}
 

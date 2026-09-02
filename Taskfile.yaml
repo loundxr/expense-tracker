@@ -91,3 +91,11 @@ tasks:
           exit 1; \
         fi
         docker compose run --rm expense-tracker-postgres-migrate create -ext sql -dir /migrations -seq {{.seq}}
+  
+  # --- utils ---
+  logs-clean:
+    desc: "Clean up all log files from LOG_DIR"
+    prompt: "Are you sure you want to clean all log files? Risk of data loss."
+    cmds:
+      - rm -rf {{.LOG_DIR}}/*
+      - echo "Log files cleaned up."

@@ -10,7 +10,7 @@ import (
 
 type GetUserResponse UserDTOResponse
 
-func (h *UserHTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
+func (h *UsersHTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 

@@ -13,7 +13,7 @@ type UpdateRoleRequest struct {
 
 type UpdateRoleResponse UserDTOResponse
 
-func (h *UserHTTPHandler) UpdateUserRole(w http.ResponseWriter, r *http.Request) {
+func (h *UsersHTTPHandler) UpdateUserRole(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 

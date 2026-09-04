@@ -1,4 +1,4 @@
-package users_postgres_repository
+package users_repository_postgres
 
 import core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 

@@ -80,3 +80,11 @@ func (p *Pool) Exec(
 	}
 	return pgconnCommandTag{comTag}, nil
 }
+
+func (p *Pool) Begin(ctx context.Context) (core_postgres_pool.Tx, error) {
+	tx, err := p.Pool.Begin(ctx)
+	if err != nil {
+		return nil, mapErrors(err)
+	}
+	return &pgxTx{tx}, nil
+}

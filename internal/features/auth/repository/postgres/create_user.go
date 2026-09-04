@@ -1,4 +1,4 @@
-package auth_postgres_repository
+package auth_repository_postgres
 
 import (
 	"context"

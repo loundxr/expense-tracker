@@ -14,6 +14,8 @@ type AccountsService struct {
 
 type AccountsRepository interface {
 	CreateAccount(ctx context.Context, account domain.Account) (domain.Account, error)
+	GetAllAccounts(ctx context.Context, limit *int, offset *int) ([]domain.Account, error)
+	GetAccountByUserID(ctx context.Context, uid int, limit *int, offset *int) ([]domain.Account, error)
 }
 
 func NewAccountsService(ar AccountsRepository, l *slog.Logger) *AccountsService {

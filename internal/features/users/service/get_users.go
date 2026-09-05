@@ -17,24 +17,6 @@ func (s *UsersService) GetUsers(ctx context.Context, limit *int, offset *int) ([
 		return nil, fmt.Errorf("%s: %w", op, core_errors.ErrForbidden)
 	}
 
-	if limit != nil && *limit <= 0 {
-		return nil, fmt.Errorf(
-			"limit must be positive: %w",
-			core_errors.ErrInvalidArgument,
-		)
-	}
-
-	if limit != nil && *limit > 100 {
-		*limit = 100
-	}
-
-	if offset != nil && *offset < 0 {
-		return nil, fmt.Errorf(
-			"offset must be non-negative: %w",
-			core_errors.ErrInvalidArgument,
-		)
-	}
-
 	users, err := s.usersRepository.GetUsers(ctx, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)

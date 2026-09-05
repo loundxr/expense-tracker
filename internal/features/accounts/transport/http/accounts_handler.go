@@ -15,6 +15,7 @@ type AccountsHTTPHandler struct {
 
 type AccountsService interface {
 	CreateAccount(ctx context.Context, account domain.Account) (domain.Account, error)
+	GetAccounts(ctx context.Context, limit *int, offset *int) ([]domain.Account, error)
 }
 
 func NewAccountsHTTPHandler(as AccountsService, l *slog.Logger) *AccountsHTTPHandler {
@@ -27,5 +28,6 @@ func NewAccountsHTTPHandler(as AccountsService, l *slog.Logger) *AccountsHTTPHan
 func (h *AccountsHTTPHandler) RegisterRoutes(r chi.Router) {
 	r.Route("/accounts", func(r chi.Router) {
 		r.Post("/", h.CreateAccount)
+		r.Get("/", h.GetAccounts)
 	})
 }

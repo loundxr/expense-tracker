@@ -23,3 +23,11 @@ func accountDomainFromModel(am AccountModel) domain.Account {
 		am.CreatedAt,
 	)
 }
+
+func accountDomainsFromModels(ams []AccountModel) []domain.Account {
+	domains := make([]domain.Account, len(ams))
+	for i, m := range ams {
+		domains[i] = accountDomainFromModel(m)
+	}
+	return domains
+}

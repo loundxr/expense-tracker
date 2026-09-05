@@ -23,3 +23,11 @@ func accountDTOFromDomain(a domain.Account) AccountDTOResponse {
 		CreatedAt: a.CreatedAt,
 	}
 }
+
+func accountDTOsFromDomains(accs []domain.Account) []AccountDTOResponse {
+	res := make([]AccountDTOResponse, len(accs))
+	for i, a := range accs {
+		res[i] = accountDTOFromDomain(a)
+	}
+	return res
+}

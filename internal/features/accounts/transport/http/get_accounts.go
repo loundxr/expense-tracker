@@ -1,4 +1,4 @@
-package users_transport_http
+package accounts_transport_http
 
 import (
 	"fmt"
@@ -8,9 +8,9 @@ import (
 	core_http_response "github.com/loundxr/expense-tracker/internal/core/transport/http/response"
 )
 
-type GetUsersResponse []UserDTOResponse
+type GetAccountsResponse []AccountDTOResponse
 
-func (h *UsersHTTPHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (h *AccountsHTTPHandler) GetAccounts(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
@@ -26,14 +26,14 @@ func (h *UsersHTTPHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := h.userService.GetUsers(ctx, limit, offset)
+	accounts, err := h.accountsService.GetAccounts(ctx, limit, offset)
 	if err != nil {
-		rh.ErrorResponse(err, "failed to get users list")
+		rh.ErrorResponse(err, "failed to get accounts")
 		return
 	}
 
-	usersDTO := GetUsersResponse(usersDTOFromDomains(users))
-	rh.JSONResponse(usersDTO, http.StatusOK)
+	response := GetAccountsResponse(accountDTOsFromDomains(accounts))
+	rh.JSONResponse(response, http.StatusOK)
 }
 
 func getLimitOffsetQueryParams(r *http.Request) (*int, *int, error) {

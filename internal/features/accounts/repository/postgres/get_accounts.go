@@ -22,7 +22,7 @@ func (r *AccountsRepository) GetAllAccounts(
 	return r.fetch(ctx, query, limit, offset)
 }
 
-func (r *AccountsRepository) GetAccountByUserID(
+func (r *AccountsRepository) GetAccountsByUserID(
 	ctx context.Context,
 	uid int,
 	limit *int,

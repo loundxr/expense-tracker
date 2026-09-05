@@ -35,7 +35,7 @@ func (s *AccountsService) GetAccounts(
 			"user fetching available accounts",
 			slog.Int("id", uid),
 		)
-		accounts, err = s.accountsRepository.GetAccountByUserID(ctx, uid, limit, offset)
+		accounts, err = s.accountsRepository.GetAccountsByUserID(ctx, uid, limit, offset)
 	}
 
 	if err != nil {

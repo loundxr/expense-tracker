@@ -16,7 +16,10 @@ type validatable interface {
 }
 
 func DecodeAndValidateRequest(r *http.Request, dest any) error {
-	if err := json.NewDecoder(r.Body).Decode(dest); err != nil {
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+
+	if err := dec.Decode(dest); err != nil {
 		return fmt.Errorf("decode json: %v: %w", err, core_errors.ErrInvalidArgument)
 	}
 

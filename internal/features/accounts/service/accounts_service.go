@@ -17,7 +17,10 @@ type AccountsRepository interface {
 	GetAllAccounts(ctx context.Context, limit *int, offset *int) ([]domain.Account, error)
 	GetAccountsByUserID(ctx context.Context, uid int, limit *int, offset *int) ([]domain.Account, error)
 	GetAccountByID(ctx context.Context, id int) (domain.Account, error)
-	HasAccess(ctx context.Context, uid int, account_id int) (bool, error)
+	DeleteAccount(ctx context.Context, accountID int) error
+	HasAccess(ctx context.Context, uid int, accountID int) (bool, error)
+	IsOwner(ctx context.Context, uid int, accountID int) (bool, error)
+	Exists(ctx context.Context, accountID int) error
 }
 
 func NewAccountsService(ar AccountsRepository, l *slog.Logger) *AccountsService {

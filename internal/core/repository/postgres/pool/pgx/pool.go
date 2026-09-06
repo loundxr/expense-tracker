@@ -76,7 +76,15 @@ func (p *Pool) Exec(
 ) (core_postgres_pool.CommandTag, error) {
 	comTag, err := p.Pool.Exec(ctx, sql, arguments...)
 	if err != nil {
-		return nil, err
+		return nil, mapErrors(err)
 	}
 	return pgconnCommandTag{comTag}, nil
+}
+
+func (p *Pool) Begin(ctx context.Context) (core_postgres_pool.Tx, error) {
+	tx, err := p.Pool.Begin(ctx)
+	if err != nil {
+		return nil, mapErrors(err)
+	}
+	return &pgxTx{tx}, nil
 }

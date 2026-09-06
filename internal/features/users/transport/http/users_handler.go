@@ -9,12 +9,12 @@ import (
 	core_http_middleware "github.com/loundxr/expense-tracker/internal/core/transport/http/middleware"
 )
 
-type UserHTTPHandler struct {
-	userService UserService
+type UsersHTTPHandler struct {
+	userService UsersService
 	logger      *slog.Logger
 }
 
-type UserService interface {
+type UsersService interface {
 	GetUsers(ctx context.Context, limit *int, offset *int) ([]domain.User, error)
 	GetUser(ctx context.Context, id int) (domain.User, error)
 	DeleteUser(ctx context.Context, id int) error
@@ -22,14 +22,14 @@ type UserService interface {
 	UpdateUserRole(ctx context.Context, id int, role string) (domain.User, error)
 }
 
-func NewUserHTTPHandler(us UserService, l *slog.Logger) *UserHTTPHandler {
-	return &UserHTTPHandler{
+func NewUsersHTTPHandler(us UsersService, l *slog.Logger) *UsersHTTPHandler {
+	return &UsersHTTPHandler{
 		userService: us,
 		logger:      l,
 	}
 }
 
-func (h *UserHTTPHandler) RegisterRoutes(r chi.Router) {
+func (h *UsersHTTPHandler) RegisterRoutes(r chi.Router) {
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/{id}", h.GetUser)
 		r.Delete("/{id}", h.DeleteUser)

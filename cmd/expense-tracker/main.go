@@ -14,10 +14,13 @@ import (
 	core_pgx_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/loundxr/expense-tracker/internal/core/transport/http/middleware"
 	core_http_server "github.com/loundxr/expense-tracker/internal/core/transport/http/server"
-	auth_postgres_repository "github.com/loundxr/expense-tracker/internal/features/auth/repository/postgres"
+	accounts_repository_postgres "github.com/loundxr/expense-tracker/internal/features/accounts/repository/postgres"
+	accounts_service "github.com/loundxr/expense-tracker/internal/features/accounts/service"
+	accounts_transport_http "github.com/loundxr/expense-tracker/internal/features/accounts/transport/http"
+	auth_repository_postgres "github.com/loundxr/expense-tracker/internal/features/auth/repository/postgres"
 	auth_service "github.com/loundxr/expense-tracker/internal/features/auth/service"
 	auth_transport_http "github.com/loundxr/expense-tracker/internal/features/auth/transport/http"
-	users_postgres_repository "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
+	users_repository_postgres "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
 	users_service "github.com/loundxr/expense-tracker/internal/features/users/service"
 	users_transport_http "github.com/loundxr/expense-tracker/internal/features/users/transport/http"
 	"github.com/loundxr/expense-tracker/internal/utils"
@@ -60,18 +63,24 @@ func main() {
 	defer cache.Close()
 	logger.Info("redis connection established")
 
+	// users feature initialization
+	logger.Debug("initializing feature users", slog.String("feature", "users"))
+	usersRepo := users_repository_postgres.NewUsersRepository(pool)
+	usersSvc := users_service.NewUsersService(usersRepo, logger)
+	usersHandler := users_transport_http.NewUsersHTTPHandler(usersSvc, logger)
+
+	// account feature initialization
+	logger.Debug("initializing feature accounts", slog.String("feature", "accounts"))
+	accountsRepo := accounts_repository_postgres.NewAccountsRepository(pool)
+	accountsSvc := accounts_service.NewAccountsService(accountsRepo, usersRepo, logger)
+	accountsHandler := accounts_transport_http.NewAccountsHTTPHandler(accountsSvc, logger)
+
 	// auth feature initialization
 	logger.Debug("initializing feature auth", slog.String("feature", "auth"))
 	jwtCfg := utils.Must(core_jwt.NewConfig())
-	authRepo := auth_postgres_repository.NewUsersAuthRepository(pool)
-	authSvc := auth_service.NewUsersAuthService(authRepo, logger, jwtCfg)
+	authRepo := auth_repository_postgres.NewUsersAuthRepository(pool)
+	authSvc := auth_service.NewUsersAuthService(authRepo, accountsSvc, logger, jwtCfg)
 	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
-
-	// users feature initialization
-	logger.Debug("initializing feature users", slog.String("feature", "users"))
-	usersRepo := users_postgres_repository.NewUsersRepository(pool)
-	usersSvc := users_service.NewUsersService(usersRepo, logger)
-	usersHandler := users_transport_http.NewUserHTTPHandler(usersSvc, logger)
 
 	// http server initialization
 	logger.Debug("initializing HTTP server")
@@ -86,6 +95,7 @@ func main() {
 	apiVersionRouter.Router().Group(func(r chi.Router) {
 		r.Use(core_http_middleware.Auth(jwtCfg.Secret, logger))
 		usersHandler.RegisterRoutes(r)
+		accountsHandler.RegisterRoutes(r)
 	})
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)

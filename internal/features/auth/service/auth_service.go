@@ -8,8 +8,13 @@ import (
 	"github.com/loundxr/expense-tracker/internal/core/domain"
 )
 
+type AccountCreator interface {
+	CreateAccount(ctx context.Context, account domain.Account) (domain.Account, error)
+}
+
 type UsersAuthService struct {
 	usersRepository UsersAuthRepository
+	accountCreator  AccountCreator
 	logger          *slog.Logger
 	cfg             core_jwt.JWTConfig
 }
@@ -19,9 +24,15 @@ type UsersAuthRepository interface {
 	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
 }
 
-func NewUsersAuthService(ur UsersAuthRepository, l *slog.Logger, jwtCfg core_jwt.JWTConfig) *UsersAuthService {
+func NewUsersAuthService(
+	ur UsersAuthRepository,
+	ac AccountCreator,
+	l *slog.Logger,
+	jwtCfg core_jwt.JWTConfig,
+) *UsersAuthService {
 	return &UsersAuthService{
 		usersRepository: ur,
+		accountCreator:  ac,
 		logger:          l,
 		cfg:             jwtCfg,
 	}

@@ -1,4 +1,4 @@
-package users_postgres_repository
+package users_repository_postgres
 
 import (
 	"time"

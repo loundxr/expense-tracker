@@ -46,6 +46,8 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 		statusCode = http.StatusNotFound
 	case errors.Is(err, core_errors.ErrForbidden):
 		statusCode = http.StatusForbidden
+	case errors.Is(err, core_errors.ErrUnauthorized):
+		statusCode = http.StatusUnauthorized
 	default:
 		statusCode = http.StatusInternalServerError
 	}

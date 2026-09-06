@@ -19,7 +19,7 @@ type PatchUserRequest struct {
 
 type PatchUserResponse UserDTOResponse
 
-func (h *UserHTTPHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
+func (h *UsersHTTPHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 

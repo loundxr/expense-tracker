@@ -83,7 +83,7 @@ func (r *AccountsRepository) Exists(ctx context.Context, id int) error {
 
 	query := `
 	SELECT 1 FROM expense_tracker.accounts
-	WHERE id=$1`
+	WHERE id=$1;`
 
 	var tmp int
 	if err := r.pool.QueryRow(ctx, query, id).Scan(&tmp); err != nil {

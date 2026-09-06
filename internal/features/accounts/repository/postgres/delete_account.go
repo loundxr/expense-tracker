@@ -12,7 +12,7 @@ func (r *AccountsRepository) DeleteAccount(ctx context.Context, accountID int) e
 
 	query := `
 	DELETE FROM expense_tracker.accounts
-	WHERE id=$1`
+	WHERE id=$1;`
 
 	_, err := r.pool.Exec(ctx, query, accountID)
 	if err != nil {

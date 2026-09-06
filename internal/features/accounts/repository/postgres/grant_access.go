@@ -10,16 +10,16 @@ import (
 	core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 )
 
-func (r *AccountsRepository) GrantAccess(ctx context.Context, accountID int, uid int) error {
+func (r *AccountsRepository) GrantAccess(ctx context.Context, accountID int, targetID int) error {
 	const op = "accounts.repository.postgres.GrantAccess"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()
 
 	query := `
 	INSERT INTO expense_tracker.account_users (account_id, user_id, created_at)
-	VALUES($1, $2, $3)`
+	VALUES($1, $2, $3);`
 
-	_, err := r.pool.Exec(ctx, query, accountID, uid, time.Now())
+	_, err := r.pool.Exec(ctx, query, accountID, targetID, time.Now())
 	if err != nil {
 		if errors.Is(err, core_postgres_pool.ErrViolatesUniqueConstraint) {
 			return fmt.Errorf("%s: user already has access: %w", op, core_errors.ErrAlreadyExists)

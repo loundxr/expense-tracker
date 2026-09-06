@@ -10,23 +10,23 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AccountsService) ShareAccount(ctx context.Context, id int, email string) error {
-	const op = "accounts.service.ShareAccount"
+func (s *AccountsService) RevokeAccess(ctx context.Context, accountID int, email string) error {
+	const op = "accounts.service.RevokeAccess"
 	uid := core_ctx.GetUserID(ctx)
 	role := core_ctx.GetUserRole(ctx)
 
-	if err := s.accountsRepository.Exists(ctx, id); err != nil {
+	if err := s.accountsRepository.Exists(ctx, accountID); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if role != domain.RoleAdmin {
-		isOwner, err := s.accountsRepository.IsOwner(ctx, uid, id)
+		isOwner, err := s.accountsRepository.IsOwner(ctx, uid, accountID)
 		if err != nil {
 			return fmt.Errorf("%s: %w", op, err)
 		}
 
 		if !isOwner {
-			return fmt.Errorf("%s: only owner can share account: %w", op, core_errors.ErrForbidden)
+			return fmt.Errorf("%s: you can revoke access only from your account: %w", op, core_errors.ErrForbidden)
 		}
 	}
 
@@ -36,19 +36,18 @@ func (s *AccountsService) ShareAccount(ctx context.Context, id int, email string
 	}
 
 	if targetUser.ID == uid {
-		return fmt.Errorf("%s: you cannot grant access to yourself: %w", op, core_errors.ErrConflict)
+		return fmt.Errorf("%s: you cannot revoke access from yourself: %w", op, core_errors.ErrConflict)
 	}
 
-	if err := s.accountsRepository.GrantAccess(ctx, id, targetUser.ID); err != nil {
+	if err := s.accountsRepository.RevokeAccess(ctx, accountID, targetUser.ID); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	s.logger.Info(
-		"granted access",
+		"revoked access",
 		slog.Int("actor_id", uid),
-		slog.Int("target_user_id", targetUser.ID),
-		slog.Int("account_id", id),
+		slog.Int("target_id", targetUser.ID),
+		slog.Int("account_id", accountID),
 	)
-
 	return nil
 }

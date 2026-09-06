@@ -23,7 +23,7 @@ func (r *AccountsRepository) PatchAccount(
 	UPDATE expense_tracker.accounts
 	SET name=$1
 	WHERE id=$2 AND version=$3
-	RETURNING id, version, name, user_id, created_at`
+	RETURNING id, version, name, user_id, created_at;`
 
 	row := r.pool.QueryRow(ctx, query, acc.Name, accountID, acc.Version)
 

@@ -63,10 +63,16 @@ func main() {
 	defer cache.Close()
 	logger.Info("redis connection established")
 
+	// users feature initialization
+	logger.Debug("initializing feature users", slog.String("feature", "users"))
+	usersRepo := users_repository_postgres.NewUsersRepository(pool)
+	usersSvc := users_service.NewUsersService(usersRepo, logger)
+	usersHandler := users_transport_http.NewUsersHTTPHandler(usersSvc, logger)
+
 	// account feature initialization
 	logger.Debug("initializing feature accounts", slog.String("feature", "accounts"))
 	accountsRepo := accounts_repository_postgres.NewAccountsRepository(pool)
-	accountsSvc := accounts_service.NewAccountsService(accountsRepo, logger)
+	accountsSvc := accounts_service.NewAccountsService(accountsRepo, usersRepo, logger)
 	accountsHandler := accounts_transport_http.NewAccountsHTTPHandler(accountsSvc, logger)
 
 	// auth feature initialization
@@ -75,12 +81,6 @@ func main() {
 	authRepo := auth_repository_postgres.NewUsersAuthRepository(pool)
 	authSvc := auth_service.NewUsersAuthService(authRepo, accountsSvc, logger, jwtCfg)
 	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
-
-	// users feature initialization
-	logger.Debug("initializing feature users", slog.String("feature", "users"))
-	usersRepo := users_repository_postgres.NewUsersRepository(pool)
-	usersSvc := users_service.NewUsersService(usersRepo, logger)
-	usersHandler := users_transport_http.NewUsersHTTPHandler(usersSvc, logger)
 
 	// http server initialization
 	logger.Debug("initializing HTTP server")

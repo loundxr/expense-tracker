@@ -39,3 +39,34 @@ func (r *UsersRepository) GetUserByID(ctx context.Context, id int) (domain.User,
 	}
 	return userDomainFromModel(um), nil
 }
+
+func (r *UsersRepository) GetUserByEmail(ctx context.Context, email string) (domain.User, error) {
+	const op = "users.repository.postgres.GetUserByEmail"
+	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
+	defer cancel()
+
+	query := `
+	SELECT id, version, email, created_at, role
+	FROM expense_tracker.users
+	WHERE email = $1`
+
+	row := r.pool.QueryRow(ctx, query, email)
+
+	var um UserModel
+	err := row.Scan(
+		&um.ID,
+		&um.Version,
+		&um.Email,
+		&um.CreatedAt,
+		&um.Role,
+	)
+	if err != nil {
+		if errors.Is(err, core_postgres_pool.ErrNotFound) {
+			return domain.User{}, fmt.Errorf("%s: %w", op, core_errors.ErrNotFound)
+		}
+		return domain.User{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	userDomain := userDomainFromModel(um)
+	return userDomain, nil
+}

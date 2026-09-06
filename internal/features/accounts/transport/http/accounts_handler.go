@@ -19,6 +19,7 @@ type AccountsService interface {
 	GetAccount(ctx context.Context, id int) (domain.Account, error)
 	DeleteAccount(ctx context.Context, accountID int) error
 	PatchAccount(ctx context.Context, id int, patch domain.AccountPatch) (domain.Account, error)
+	ShareAccount(ctx context.Context, id int, email string) error
 }
 
 func NewAccountsHTTPHandler(as AccountsService, l *slog.Logger) *AccountsHTTPHandler {
@@ -35,5 +36,7 @@ func (h *AccountsHTTPHandler) RegisterRoutes(r chi.Router) {
 		r.Get("/{id}", h.GetAccount)
 		r.Delete("/{id}", h.DeleteAccount)
 		r.Patch("/{id}", h.PatchAccount)
+
+		r.Post("/{id}/share", h.ShareAccount)
 	})
 }

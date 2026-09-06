@@ -9,6 +9,7 @@ import (
 
 type AccountsService struct {
 	accountsRepository AccountsRepository
+	userProvider       UserProvider
 	logger             *slog.Logger
 }
 
@@ -19,14 +20,20 @@ type AccountsRepository interface {
 	GetAccountByID(ctx context.Context, id int) (domain.Account, error)
 	DeleteAccount(ctx context.Context, accountID int) error
 	PatchAccount(ctx context.Context, accountID int, patch domain.Account) (domain.Account, error)
+	GrantAccess(ctx context.Context, accountID int, uid int) error
 	HasAccess(ctx context.Context, uid int, accountID int) (bool, error)
 	IsOwner(ctx context.Context, uid int, accountID int) (bool, error)
 	Exists(ctx context.Context, accountID int) error
 }
 
-func NewAccountsService(ar AccountsRepository, l *slog.Logger) *AccountsService {
+type UserProvider interface {
+	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
+}
+
+func NewAccountsService(ar AccountsRepository, up UserProvider, l *slog.Logger) *AccountsService {
 	return &AccountsService{
 		accountsRepository: ar,
+		userProvider:       up,
 		logger:             l,
 	}
 }

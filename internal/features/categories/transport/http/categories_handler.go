@@ -15,6 +15,7 @@ type CategoriesHTTPHandler struct {
 
 type CategoriesService interface {
 	CreateCategory(ctx context.Context, cat domain.Category) (domain.Category, error)
+	GetCategories(ctx context.Context) ([]domain.Category, error)
 }
 
 func NewCategoriesHTTPHandler(cs CategoriesService, l *slog.Logger) *CategoriesHTTPHandler {
@@ -27,5 +28,6 @@ func NewCategoriesHTTPHandler(cs CategoriesService, l *slog.Logger) *CategoriesH
 func (h *CategoriesHTTPHandler) RegisterRoutes(r chi.Router) {
 	r.Route("/categories", func(r chi.Router) {
 		r.Post("/", h.CreateCategory)
+		r.Get("/", h.GetCategories)
 	})
 }

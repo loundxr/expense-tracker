@@ -17,6 +17,7 @@ type CategoriesRepository interface {
 	GetAllCategories(ctx context.Context) ([]domain.Category, error)
 	GetCategoriesByID(ctx context.Context, uid int) ([]domain.Category, error)
 	GetCategory(ctx context.Context, id int) (domain.Category, error)
+	DeleteCategory(ctx context.Context, id int) error
 }
 
 func NewCategoriesService(cr CategoriesRepository, l *slog.Logger) *CategoriesService {

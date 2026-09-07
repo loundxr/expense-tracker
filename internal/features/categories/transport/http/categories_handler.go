@@ -18,6 +18,7 @@ type CategoriesService interface {
 	GetCategories(ctx context.Context) ([]domain.Category, error)
 	GetCategory(ctx context.Context, id int) (domain.Category, error)
 	DeleteCategory(ctx context.Context, id int) error
+	PatchCategory(ctx context.Context, id int, patch domain.CategoryPatch) (domain.Category, error)
 }
 
 func NewCategoriesHTTPHandler(cs CategoriesService, l *slog.Logger) *CategoriesHTTPHandler {
@@ -33,5 +34,6 @@ func (h *CategoriesHTTPHandler) RegisterRoutes(r chi.Router) {
 		r.Get("/", h.GetCategories)
 		r.Get("/{id}", h.GetCategory)
 		r.Delete("/{id}", h.DeleteCategory)
+		r.Patch("/{id}", h.PatchCategory)
 	})
 }

@@ -20,6 +20,9 @@ import (
 	auth_repository_postgres "github.com/loundxr/expense-tracker/internal/features/auth/repository/postgres"
 	auth_service "github.com/loundxr/expense-tracker/internal/features/auth/service"
 	auth_transport_http "github.com/loundxr/expense-tracker/internal/features/auth/transport/http"
+	categories_repository_postgres "github.com/loundxr/expense-tracker/internal/features/categories/repository/postgres"
+	categories_service "github.com/loundxr/expense-tracker/internal/features/categories/service"
+	categories_transport_http "github.com/loundxr/expense-tracker/internal/features/categories/transport/http"
 	users_repository_postgres "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
 	users_service "github.com/loundxr/expense-tracker/internal/features/users/service"
 	users_transport_http "github.com/loundxr/expense-tracker/internal/features/users/transport/http"
@@ -82,6 +85,12 @@ func main() {
 	authSvc := auth_service.NewUsersAuthService(authRepo, accountsSvc, logger, jwtCfg)
 	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
 
+	// categories feature initialization
+	logger.Debug("initializing feature categories", slog.String("feature", "categories"))
+	categoriesRepo := categories_repository_postgres.NewCategoriesRepository(pool)
+	categoriesSvc := categories_service.NewCategoriesService(categoriesRepo, logger)
+	categoriesHandler := categories_transport_http.NewCategoriesHTTPHandler(categoriesSvc, logger)
+
 	// http server initialization
 	logger.Debug("initializing HTTP server")
 	httpConfig := utils.Must(core_http_server.NewConfig())
@@ -96,6 +105,7 @@ func main() {
 		r.Use(core_http_middleware.Auth(jwtCfg.Secret, logger))
 		usersHandler.RegisterRoutes(r)
 		accountsHandler.RegisterRoutes(r)
+		categoriesHandler.RegisterRoutes(r)
 	})
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)

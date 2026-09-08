@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *UsersService) PatchUser(ctx context.Context, id int, patch domain.UserPatch) (domain.User, error) {
+func (s *UsersService) PatchUser(ctx context.Context, id int64, patch domain.UserPatch) (domain.User, error) {
 	const op = "users.service.PatchUser"
 	currID := core_ctx.GetUserID(ctx)
 	currRole := core_ctx.GetUserRole(ctx)
@@ -50,8 +50,8 @@ func (s *UsersService) PatchUser(ctx context.Context, id int, patch domain.UserP
 
 	s.logger.Info(
 		"user profile patched",
-		slog.Int("actor_id", currID),
-		slog.Int("target_id", id),
+		slog.Int64("actor_id", currID),
+		slog.Int64("target_id", id),
 		slog.Any("fields", patchedFields),
 	)
 

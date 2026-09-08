@@ -12,7 +12,7 @@ import (
 
 // TODO: implement redis 'iat' state for dynamically checking time user was updated
 // to prevent non-admins from manipulating data
-func (s *UsersService) UpdateUserRole(ctx context.Context, id int, role string) (domain.User, error) {
+func (s *UsersService) UpdateUserRole(ctx context.Context, id int64, role string) (domain.User, error) {
 	const op = "users.service.UpdateUserRole"
 	currID := core_ctx.GetUserID(ctx)
 	currRole := core_ctx.GetUserRole(ctx)
@@ -39,8 +39,8 @@ func (s *UsersService) UpdateUserRole(ctx context.Context, id int, role string) 
 
 	s.logger.Warn(
 		"user role updated",
-		slog.Int("actor_id", currID),
-		slog.Int("target_id", id),
+		slog.Int64("actor_id", currID),
+		slog.Int64("target_id", id),
 		slog.String("previous_role", prevRole),
 		slog.String("new_role", role),
 	)

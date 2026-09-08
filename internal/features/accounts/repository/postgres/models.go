@@ -7,10 +7,10 @@ import (
 )
 
 type AccountModel struct {
-	ID        int
-	Version   int
+	ID        int64
+	Version   int64
 	Name      string
-	UserID    int
+	UserID    int64
 	CreatedAt time.Time
 }
 

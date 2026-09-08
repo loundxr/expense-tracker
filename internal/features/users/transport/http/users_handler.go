@@ -16,10 +16,10 @@ type UsersHTTPHandler struct {
 
 type UsersService interface {
 	GetUsers(ctx context.Context, limit *int, offset *int) ([]domain.User, error)
-	GetUser(ctx context.Context, id int) (domain.User, error)
-	DeleteUser(ctx context.Context, id int) error
-	PatchUser(ctx context.Context, id int, patch domain.UserPatch) (domain.User, error)
-	UpdateUserRole(ctx context.Context, id int, role string) (domain.User, error)
+	GetUser(ctx context.Context, id int64) (domain.User, error)
+	DeleteUser(ctx context.Context, id int64) error
+	PatchUser(ctx context.Context, id int64, patch domain.UserPatch) (domain.User, error)
+	UpdateUserRole(ctx context.Context, id int64, role string) (domain.User, error)
 }
 
 func NewUsersHTTPHandler(us UsersService, l *slog.Logger) *UsersHTTPHandler {

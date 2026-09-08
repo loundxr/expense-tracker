@@ -10,7 +10,7 @@ import (
 	core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 )
 
-func (r *AccountsRepository) GetAccountByID(ctx context.Context, id int) (domain.Account, error) {
+func (r *AccountsRepository) GetAccountByID(ctx context.Context, id int64) (domain.Account, error) {
 	const op = "accounts.repository.postgres.GetAccountByID"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()
@@ -42,7 +42,7 @@ func (r *AccountsRepository) GetAccountByID(ctx context.Context, id int) (domain
 	return accDomain, nil
 }
 
-func (r *AccountsRepository) HasAccess(ctx context.Context, uid, accountID int) (bool, error) {
+func (r *AccountsRepository) HasAccess(ctx context.Context, uid, accountID int64) (bool, error) {
 	const op = "accounts.repository.postgres.HasAccess"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()
@@ -59,7 +59,7 @@ func (r *AccountsRepository) HasAccess(ctx context.Context, uid, accountID int) 
 	return exists, nil
 }
 
-func (r *AccountsRepository) IsOwner(ctx context.Context, uid, accountID int) (bool, error) {
+func (r *AccountsRepository) IsOwner(ctx context.Context, uid, accountID int64) (bool, error) {
 	const op = "accounts.repository.postgres.IsOwner"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()
@@ -76,7 +76,7 @@ func (r *AccountsRepository) IsOwner(ctx context.Context, uid, accountID int) (b
 	return isOwner, nil
 }
 
-func (r *AccountsRepository) Exists(ctx context.Context, id int) error {
+func (r *AccountsRepository) Exists(ctx context.Context, id int64) error {
 	const op = "accounts.repository.postgres.Exists"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

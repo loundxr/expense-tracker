@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *UsersService) GetUser(ctx context.Context, id int) (domain.User, error) {
+func (s *UsersService) GetUser(ctx context.Context, id int64) (domain.User, error) {
 	const op = "users.service.GetUser"
 
 	currUID := core_ctx.GetUserID(ctx)
@@ -27,9 +27,9 @@ func (s *UsersService) GetUser(ctx context.Context, id int) (domain.User, error)
 
 	s.logger.Info(
 		"user profile fetched",
-		slog.Int("actor_id", currUID),
+		slog.Int64("actor_id", currUID),
 		slog.String("actor_role", currRole),
-		slog.Int("target_id", id),
+		slog.Int64("target_id", id),
 	)
 
 	return user, nil

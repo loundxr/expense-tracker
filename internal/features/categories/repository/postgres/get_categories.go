@@ -23,7 +23,7 @@ func (r *CategoriesRepository) GetAllCategories(ctx context.Context) ([]domain.C
 	return categories, nil
 }
 
-func (r *CategoriesRepository) GetCategoriesByID(ctx context.Context, uid int) ([]domain.Category, error) {
+func (r *CategoriesRepository) GetCategoriesByID(ctx context.Context, uid int64) ([]domain.Category, error) {
 	const op = "categories.repository.postgres.GetCategoriesByID"
 
 	query := `

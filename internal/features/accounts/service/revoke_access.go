@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AccountsService) RevokeAccess(ctx context.Context, accountID int, email string) error {
+func (s *AccountsService) RevokeAccess(ctx context.Context, accountID int64, email string) error {
 	const op = "accounts.service.RevokeAccess"
 	uid := core_ctx.GetUserID(ctx)
 	role := core_ctx.GetUserRole(ctx)
@@ -45,9 +45,9 @@ func (s *AccountsService) RevokeAccess(ctx context.Context, accountID int, email
 
 	s.logger.Info(
 		"revoked access",
-		slog.Int("actor_id", uid),
-		slog.Int("target_id", targetUser.ID),
-		slog.Int("account_id", accountID),
+		slog.Int64("actor_id", uid),
+		slog.Int64("target_id", targetUser.ID),
+		slog.Int64("account_id", accountID),
 	)
 	return nil
 }

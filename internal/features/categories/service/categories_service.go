@@ -15,10 +15,10 @@ type CategoriesService struct {
 type CategoriesRepository interface {
 	CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
 	GetAllCategories(ctx context.Context) ([]domain.Category, error)
-	GetCategoriesByID(ctx context.Context, uid int) ([]domain.Category, error)
-	GetCategory(ctx context.Context, id int) (domain.Category, error)
-	DeleteCategory(ctx context.Context, id int) error
-	PatchCategory(ctx context.Context, id int, toPatch domain.Category) (domain.Category, error)
+	GetCategoriesByID(ctx context.Context, uid int64) ([]domain.Category, error)
+	GetCategory(ctx context.Context, id int64) (domain.Category, error)
+	DeleteCategory(ctx context.Context, id int64) error
+	PatchCategory(ctx context.Context, id int64, toPatch domain.Category) (domain.Category, error)
 }
 
 func NewCategoriesService(cr CategoriesRepository, l *slog.Logger) *CategoriesService {

@@ -10,7 +10,7 @@ import (
 	core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 )
 
-func (r *AccountsRepository) GrantAccess(ctx context.Context, accountID int, targetID int) error {
+func (r *AccountsRepository) GrantAccess(ctx context.Context, accountID int64, targetID int64) error {
 	const op = "accounts.repository.postgres.GrantAccess"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

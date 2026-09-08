@@ -14,9 +14,9 @@ type UsersService struct {
 
 type UsersRepository interface {
 	GetUsers(ctx context.Context, limit *int, offset *int) ([]domain.User, error)
-	GetUserByID(ctx context.Context, id int) (domain.User, error)
-	DeleteUser(ctx context.Context, id int) error
-	PatchUser(ctx context.Context, id int, user domain.User) (domain.User, error)
+	GetUserByID(ctx context.Context, id int64) (domain.User, error)
+	DeleteUser(ctx context.Context, id int64) error
+	PatchUser(ctx context.Context, id int64, user domain.User) (domain.User, error)
 }
 
 func NewUsersService(ur UsersRepository, l *slog.Logger) *UsersService {

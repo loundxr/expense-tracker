@@ -23,7 +23,7 @@ func (s *UsersService) GetUsers(ctx context.Context, limit *int, offset *int) ([
 	}
 	s.logger.Info(
 		"users list fetched by admin",
-		slog.Int("actor_id", core_ctx.GetUserID(ctx)),
+		slog.Int64("actor_id", core_ctx.GetUserID(ctx)),
 	)
 	return users, nil
 }

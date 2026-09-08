@@ -24,7 +24,7 @@ func (r *AccountsRepository) GetAllAccounts(
 
 func (r *AccountsRepository) GetAccountsByUserID(
 	ctx context.Context,
-	uid int,
+	uid int64,
 	limit *int,
 	offset *int,
 ) ([]domain.Account, error) {

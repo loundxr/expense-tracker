@@ -8,18 +8,18 @@ import (
 )
 
 type Account struct {
-	ID        int
-	Version   int
+	ID        int64
+	Version   int64
 	Name      string
-	UserID    int
+	UserID    int64
 	CreatedAt time.Time
 }
 
 func NewAccount(
-	id int,
-	version int,
+	id int64,
+	version int64,
 	name string,
-	userID int,
+	userID int64,
 	createdAt time.Time,
 ) Account {
 	return Account{
@@ -31,7 +31,7 @@ func NewAccount(
 	}
 }
 
-func NewUninitializedAccount(name string, ownerID int) Account {
+func NewUninitializedAccount(name string, ownerID int64) Account {
 	return NewAccount(
 		uninitializedID,
 		uninitialiedVersion,

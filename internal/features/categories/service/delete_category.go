@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *CategoriesService) DeleteCategory(ctx context.Context, id int) error {
+func (s *CategoriesService) DeleteCategory(ctx context.Context, id int64) error {
 	const op = "categories.service.DeleteCategory"
 
 	uid := core_ctx.GetUserID(ctx)
@@ -36,8 +36,8 @@ func (s *CategoriesService) DeleteCategory(ctx context.Context, id int) error {
 
 	s.logger.Info(
 		"category deleted",
-		slog.Int("user_id", *category.UserID),
-		slog.Int("category_id", category.ID),
+		slog.Int64("user_id", *category.UserID),
+		slog.Int64("category_id", category.ID),
 		slog.String("category", category.Name),
 	)
 	return nil

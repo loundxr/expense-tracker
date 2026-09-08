@@ -14,7 +14,7 @@ func (h *CategoriesHTTPHandler) GetCategory(w http.ResponseWriter, r *http.Reque
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
 	id, err := core_http_request.GetIntPathValue(r, "id")
-	if err != nil || id < 0 {
+	if err != nil || id <= 0 {
 		rh.ErrorResponse(err, "invalid id format")
 		return
 	}

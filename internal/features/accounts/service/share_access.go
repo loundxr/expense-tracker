@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AccountsService) ShareAccess(ctx context.Context, id int, email string) error {
+func (s *AccountsService) ShareAccess(ctx context.Context, id int64, email string) error {
 	const op = "accounts.service.ShareAccess"
 	uid := core_ctx.GetUserID(ctx)
 	role := core_ctx.GetUserRole(ctx)
@@ -45,9 +45,9 @@ func (s *AccountsService) ShareAccess(ctx context.Context, id int, email string)
 
 	s.logger.Info(
 		"granted access",
-		slog.Int("actor_id", uid),
-		slog.Int("target_user_id", targetUser.ID),
-		slog.Int("account_id", id),
+		slog.Int64("actor_id", uid),
+		slog.Int64("target_user_id", targetUser.ID),
+		slog.Int64("account_id", id),
 	)
 
 	return nil

@@ -10,7 +10,7 @@ import (
 	core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 )
 
-func (r *UsersRepository) PatchUser(ctx context.Context, id int, u domain.User) (domain.User, error) {
+func (r *UsersRepository) PatchUser(ctx context.Context, id int64, u domain.User) (domain.User, error) {
 	const op = "users.repository.postgres"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

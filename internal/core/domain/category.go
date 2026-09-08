@@ -8,18 +8,18 @@ import (
 )
 
 type Category struct {
-	ID        int
-	Version   int
+	ID        int64
+	Version   int64
 	Name      string
-	UserID    *int
+	UserID    *int64
 	CreatedAt time.Time
 }
 
 func NewCategory(
-	id int,
-	version int,
+	id int64,
+	version int64,
 	name string,
-	userID *int,
+	userID *int64,
 	createdAt time.Time,
 ) Category {
 	return Category{
@@ -31,7 +31,7 @@ func NewCategory(
 	}
 }
 
-func NewUninitializedCategory(name string, userID *int) Category {
+func NewUninitializedCategory(name string, userID *int64) Category {
 	return NewCategory(
 		uninitializedID,
 		uninitialiedVersion,

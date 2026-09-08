@@ -35,7 +35,7 @@ func (s CategoriesService) GetCategories(ctx context.Context) ([]domain.Category
 
 	s.logger.Info(
 		"user fetched categories",
-		slog.Int("id", uid),
+		slog.Int64("id", uid),
 		slog.String("type", fetchType),
 	)
 

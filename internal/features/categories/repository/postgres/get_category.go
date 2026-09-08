@@ -10,7 +10,7 @@ import (
 	core_postgres_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool"
 )
 
-func (r *CategoriesRepository) GetCategory(ctx context.Context, id int) (domain.Category, error) {
+func (r *CategoriesRepository) GetCategory(ctx context.Context, id int64) (domain.Category, error) {
 	const op = "categories.repository.postgres.GetCategory"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (r *CategoriesRepository) DeleteCategory(ctx context.Context, id int) error {
+func (r *CategoriesRepository) DeleteCategory(ctx context.Context, id int64) error {
 	const op = "categories.repository.postgres.DeleteCategory"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

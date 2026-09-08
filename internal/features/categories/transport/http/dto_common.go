@@ -7,10 +7,10 @@ import (
 )
 
 type CategoryDTOResponse struct {
-	ID        int       `json:"id"`
-	Version   int       `json:"version"`
+	ID        int64     `json:"id"`
+	Version   int64     `json:"version"`
 	Name      string    `json:"name"`
-	UserID    *int      `json:"user_id"`
+	UserID    *int64    `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

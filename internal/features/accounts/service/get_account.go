@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AccountsService) GetAccount(ctx context.Context, accountID int) (domain.Account, error) {
+func (s *AccountsService) GetAccount(ctx context.Context, accountID int64) (domain.Account, error) {
 	const op = "accounts.service.GetAccount"
 
 	uid := core_ctx.GetUserID(ctx)
@@ -34,8 +34,8 @@ func (s *AccountsService) GetAccount(ctx context.Context, accountID int) (domain
 
 	s.logger.Info(
 		"account info fetched",
-		slog.Int("actor_id", uid),
-		slog.Int("account_id", accountID),
+		slog.Int64("actor_id", uid),
+		slog.Int64("account_id", accountID),
 	)
 	return account, nil
 }

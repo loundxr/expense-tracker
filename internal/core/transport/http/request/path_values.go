@@ -8,7 +8,7 @@ import (
 	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
 )
 
-func GetIntPathValue(r *http.Request, key string) (int, error) {
+func GetIntPathValue(r *http.Request, key string) (int64, error) {
 	pathVal := r.PathValue(key)
 	if pathVal == "" {
 		return 0, fmt.Errorf(
@@ -28,5 +28,5 @@ func GetIntPathValue(r *http.Request, key string) (int, error) {
 			core_errors.ErrInvalidArgument,
 		)
 	}
-	return val, nil
+	return int64(val), nil
 }

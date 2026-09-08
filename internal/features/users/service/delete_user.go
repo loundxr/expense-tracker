@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *UsersService) DeleteUser(ctx context.Context, id int) error {
+func (s *UsersService) DeleteUser(ctx context.Context, id int64) error {
 	const op = "users.service.DeleteUser"
 
 	currUID := core_ctx.GetUserID(ctx)
@@ -26,9 +26,9 @@ func (s *UsersService) DeleteUser(ctx context.Context, id int) error {
 
 	s.logger.Info(
 		"user profile deleted",
-		slog.Int("actor_id", currUID),
+		slog.Int64("actor_id", currUID),
 		slog.String("actor_role", currRole),
-		slog.Int("target_id", id),
+		slog.Int64("target_id", id),
 	)
 
 	return nil

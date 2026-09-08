@@ -7,7 +7,7 @@ import (
 	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
 )
 
-func (r *UsersRepository) DeleteUser(ctx context.Context, id int) error {
+func (r *UsersRepository) DeleteUser(ctx context.Context, id int64) error {
 	const op = "users.repository.postgres.DeleteUser"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

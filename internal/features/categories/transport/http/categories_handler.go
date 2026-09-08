@@ -16,9 +16,9 @@ type CategoriesHTTPHandler struct {
 type CategoriesService interface {
 	CreateCategory(ctx context.Context, cat domain.Category) (domain.Category, error)
 	GetCategories(ctx context.Context) ([]domain.Category, error)
-	GetCategory(ctx context.Context, id int) (domain.Category, error)
-	DeleteCategory(ctx context.Context, id int) error
-	PatchCategory(ctx context.Context, id int, patch domain.CategoryPatch) (domain.Category, error)
+	GetCategory(ctx context.Context, id int64) (domain.Category, error)
+	DeleteCategory(ctx context.Context, id int64) error
+	PatchCategory(ctx context.Context, id int64, patch domain.CategoryPatch) (domain.Category, error)
 }
 
 func NewCategoriesHTTPHandler(cs CategoriesService, l *slog.Logger) *CategoriesHTTPHandler {

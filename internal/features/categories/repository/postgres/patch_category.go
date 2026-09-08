@@ -12,7 +12,7 @@ import (
 
 func (r *CategoriesRepository) PatchCategory(
 	ctx context.Context,
-	id int,
+	id int64,
 	toPatch domain.Category,
 ) (domain.Category, error) {
 	const op = "categories.repository.postgres.PatchCategory"

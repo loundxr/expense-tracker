@@ -21,7 +21,7 @@ func (s *CategoriesService) CreateCategory(
 
 	s.logger.Info(
 		"user added personal category",
-		slog.Int("user_id", *cat.UserID),
+		slog.Int64("user_id", *cat.UserID),
 		slog.String("name", cat.Name),
 	)
 	return cat, nil

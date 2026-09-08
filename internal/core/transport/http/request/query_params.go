@@ -48,3 +48,21 @@ func ValidateLimitOffsetParams(limit *int, offset *int) error {
 	}
 	return nil
 }
+
+func GetLimitOffsetQueryParams(r *http.Request) (*int, *int, error) {
+	const (
+		limitQueryKey  = "limit"
+		offsetQueryKey = "offset"
+	)
+
+	limit, err := GetIntQueryParams(r, limitQueryKey)
+	if err != nil {
+		return nil, nil, fmt.Errorf("get %s query param: %w", limitQueryKey, err)
+	}
+
+	offset, err := GetIntQueryParams(r, offsetQueryKey)
+	if err != nil {
+		return nil, nil, fmt.Errorf("get %s query param: %w", offsetQueryKey, err)
+	}
+	return limit, offset, nil
+}

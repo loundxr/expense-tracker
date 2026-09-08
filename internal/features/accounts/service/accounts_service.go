@@ -19,7 +19,7 @@ type AccountsRepository interface {
 	GetAccountsByUserID(ctx context.Context, uid int, limit *int, offset *int) ([]domain.Account, error)
 	GetAccountByID(ctx context.Context, id int) (domain.Account, error)
 	DeleteAccount(ctx context.Context, accountID int) error
-	PatchAccount(ctx context.Context, accountID int, patch domain.Account) (domain.Account, error)
+	PatchAccount(ctx context.Context, accountID int, toPatch domain.Account) (domain.Account, error)
 	GrantAccess(ctx context.Context, accountID int, targetID int) error
 	RevokeAccess(ctx context.Context, accountID int, targetID int) error
 	HasAccess(ctx context.Context, uid int, accountID int) (bool, error)

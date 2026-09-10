@@ -42,7 +42,7 @@ func NewExpense(
 }
 
 func NewUninitializedExpense(
-	accountID, userID, categoryID int64,
+	accountID, categoryID int64,
 	amount int64,
 	description string,
 	date time.Time,
@@ -51,7 +51,7 @@ func NewUninitializedExpense(
 		uninitializedID,
 		uninitialiedVersion,
 		accountID,
-		userID,
+		uninitializedID,
 		categoryID,
 		amount,
 		"USD",

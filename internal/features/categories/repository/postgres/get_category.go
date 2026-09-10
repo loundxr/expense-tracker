@@ -41,3 +41,22 @@ func (r *CategoriesRepository) GetCategory(ctx context.Context, id int64) (domai
 	categoryDomain := categoryDomainFromModel(cm)
 	return categoryDomain, nil
 }
+
+func (r *CategoriesRepository) HasAccess(ctx context.Context, uid, categoryID int64) (bool, error) {
+	const op = "categories.repository.postgres.HasAccess"
+	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
+	defer cancel()
+
+	query := `
+	SELECT EXISTS (
+		SELECT 1 FROM expense_tracker.categories
+		WHERE id=$1 AND (user_id=$2 OR user_id IS NULL)
+	);`
+
+	var exists bool
+	err := r.pool.QueryRow(ctx, query, categoryID, uid).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+	return exists, nil
+}

@@ -23,6 +23,9 @@ import (
 	categories_repository_postgres "github.com/loundxr/expense-tracker/internal/features/categories/repository/postgres"
 	categories_service "github.com/loundxr/expense-tracker/internal/features/categories/service"
 	categories_transport_http "github.com/loundxr/expense-tracker/internal/features/categories/transport/http"
+	expenses_repository_postgres "github.com/loundxr/expense-tracker/internal/features/expenses/repository/postgres"
+	expenses_service "github.com/loundxr/expense-tracker/internal/features/expenses/service"
+	expenses_transport_http "github.com/loundxr/expense-tracker/internal/features/expenses/transport/http"
 	users_repository_postgres "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
 	users_service "github.com/loundxr/expense-tracker/internal/features/users/service"
 	users_transport_http "github.com/loundxr/expense-tracker/internal/features/users/transport/http"
@@ -91,6 +94,12 @@ func main() {
 	categoriesSvc := categories_service.NewCategoriesService(categoriesRepo, logger)
 	categoriesHandler := categories_transport_http.NewCategoriesHTTPHandler(categoriesSvc, logger)
 
+	// expenses feature initialization
+	logger.Debug("initializing feature expenses", slog.String("feature", "expenses"))
+	expensesRepo := expenses_repository_postgres.NewExpensesRepository(pool)
+	expensesSvc := expenses_service.NewExpensesService(expensesRepo, accountsRepo, categoriesRepo, logger)
+	expensesHandler := expenses_transport_http.NewExpensesHTTPHandler(expensesSvc, logger)
+
 	// http server initialization
 	logger.Debug("initializing HTTP server")
 	httpConfig := utils.Must(core_http_server.NewConfig())
@@ -106,6 +115,7 @@ func main() {
 		usersHandler.RegisterRoutes(r)
 		accountsHandler.RegisterRoutes(r)
 		categoriesHandler.RegisterRoutes(r)
+		expensesHandler.RegisterRoutes(r)
 	})
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)

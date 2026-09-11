@@ -30,6 +30,7 @@ func NewExpensesService(
 
 type ExpensesRepository interface {
 	CreateExpense(ctx context.Context, expense domain.Expense) (domain.Expense, error)
+	GetExpenses(ctx context.Context, filter domain.ExpenseFilter) ([]domain.Expense, error)
 }
 
 type AccountAccessChecker interface {

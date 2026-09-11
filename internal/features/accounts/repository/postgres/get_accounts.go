@@ -55,7 +55,7 @@ func (r *AccountsRepository) fetch(
 	}
 	defer rows.Close()
 
-	var accountModels []AccountModel
+	accountModels := make([]AccountModel, 0)
 	for rows.Next() {
 		var am AccountModel
 		err := rows.Scan(
@@ -71,6 +71,10 @@ func (r *AccountsRepository) fetch(
 		}
 		accountModels = append(accountModels, am)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: rows error: %w", op, err)
+	}
+
 	domains := accountDomainsFromModels(accountModels)
 	return domains, nil
 }

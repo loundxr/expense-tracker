@@ -60,3 +60,23 @@ func NewUninitializedExpense(
 		time.Now(),
 	)
 }
+
+type ExpenseFilter struct {
+	AccountID  int64
+	CategoryID *int64
+	From       *time.Time
+	To         *time.Time
+	Limit      *int
+	Offset     *int
+}
+
+func NewExpenseFilter(accID int64, catID *int64, from, to *time.Time, limit, offset *int) ExpenseFilter {
+	return ExpenseFilter{
+		AccountID:  accID,
+		CategoryID: catID,
+		From:       from,
+		To:         to,
+		Limit:      limit,
+		Offset:     offset,
+	}
+}

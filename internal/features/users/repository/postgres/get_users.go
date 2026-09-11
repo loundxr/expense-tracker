@@ -25,7 +25,7 @@ func (r *UsersRepository) GetUsers(ctx context.Context, limit, offset *int) ([]d
 	}
 	defer rows.Close()
 
-	var userModels []UserModel
+	userModels := make([]UserModel, 0)
 	for rows.Next() {
 		var um UserModel
 		err := rows.Scan(
@@ -41,6 +41,10 @@ func (r *UsersRepository) GetUsers(ctx context.Context, limit, offset *int) ([]d
 		}
 		userModels = append(userModels, um)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: rows error: %w", op, err)
+	}
+
 	domains := userDomainsFromModels(userModels)
 	return domains, nil
 }

@@ -1,6 +1,9 @@
 package core_errors
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 var (
 	ErrInvalidArgument  = errors.New("invalid argument")
@@ -9,6 +12,6 @@ var (
 	ErrNotFound         = errors.New("not found")
 	ErrUnauthorized     = errors.New("unauthorized")
 	ErrForbidden        = errors.New("forbidden")
-	ErrCategoryNotFound = errors.New("category not found")
-	ErrAccountNotFound  = errors.New("account not found")
+	ErrCategoryNotFound = fmt.Errorf("%w: category", ErrNotFound)
+	ErrAccountNotFound  = fmt.Errorf("%w: account", ErrNotFound)
 )

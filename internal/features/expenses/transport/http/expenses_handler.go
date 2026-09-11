@@ -17,6 +17,7 @@ type ExpensesService interface {
 	CreateExpense(ctx context.Context, expense domain.Expense) (domain.Expense, error)
 	GetExpenses(ctx context.Context, filter domain.ExpenseFilter) ([]domain.Expense, error)
 	GetExpense(ctx context.Context, id int64) (domain.Expense, error)
+	DeleteExpense(ctx context.Context, id int64) error
 }
 
 func NewExpensesHTTPHandler(es ExpensesService, l *slog.Logger) *ExpensesHTTPHandler {
@@ -31,5 +32,6 @@ func (h *ExpensesHTTPHandler) RegisterRoutes(r chi.Router) {
 	r.Route("/expenses", func(r chi.Router) {
 		r.Post("/", h.CreateExpense)
 		r.Get("/{id}", h.GetExpense)
+		r.Delete("/{id}", h.DeleteExpense)
 	})
 }

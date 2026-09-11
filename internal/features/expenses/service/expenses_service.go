@@ -32,10 +32,12 @@ type ExpensesRepository interface {
 	CreateExpense(ctx context.Context, expense domain.Expense) (domain.Expense, error)
 	GetExpenses(ctx context.Context, filter domain.ExpenseFilter) ([]domain.Expense, error)
 	GetExpense(ctx context.Context, id int64) (domain.Expense, error)
+	DeleteExpense(ctx context.Context, id int64) error
 }
 
 type AccountAccessChecker interface {
 	HasAccess(ctx context.Context, uid, accountID int64) (bool, error)
+	IsOwner(ctx context.Context, uid, accountID int64) (bool, error)
 }
 
 type CategoryAccessChecker interface {

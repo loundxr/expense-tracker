@@ -83,6 +83,13 @@ func (e Expense) Validate() error {
 		)
 	}
 
+	if e.Amount <= 0 {
+		return fmt.Errorf(
+			"amount must be a positive number: %w",
+			core_errors.ErrInvalidArgument,
+		)
+	}
+
 	return nil
 }
 
@@ -128,20 +135,20 @@ func (e *Expense) ApplyPatch(p ExpensePatch) error {
 	}
 
 	tmp := *e
-	if p.Amount.Set {
+	if p.Amount.Set && p.Amount.Val != nil {
 		tmp.Amount = *p.Amount.Val
 	}
-	if p.CategoryID.Set {
+	if p.CategoryID.Set && p.CategoryID.Val != nil {
 		tmp.CategoryID = *p.CategoryID.Val
 	}
-	if p.Description.Set {
+	if p.Description.Set && p.Description.Val != nil {
 		if p.Description.Val == nil {
 			tmp.Description = ""
 		} else {
 			tmp.Description = *p.Description.Val
 		}
 	}
-	if p.Date.Set {
+	if p.Date.Set && p.Date.Val != nil {
 		tmp.Date = *p.Date.Val
 	}
 

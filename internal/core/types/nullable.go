@@ -17,11 +17,16 @@ func (n *Nullable[T]) ToDomain() domain.Nullable[T] {
 	}
 }
 
-func (n *Nullable[T]) UnmarshalJSON(b []byte) error {
+func (n *Nullable[T]) UnmarshalJSON(data []byte) error {
 	n.Set = true
 
+	if string(data) == "null" {
+		n.Val = nil
+		return nil
+	}
+
 	var val T
-	if err := json.Unmarshal(b, &val); err != nil {
+	if err := json.Unmarshal(data, &val); err != nil {
 		return err
 	}
 	n.Val = &val

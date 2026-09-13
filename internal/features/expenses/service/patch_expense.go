@@ -3,6 +3,7 @@ package expenses_service
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/loundxr/expense-tracker/internal/core/domain"
 	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
@@ -42,6 +43,13 @@ func (s *ExpensesService) PatchExpense(ctx context.Context, id int64, p domain.E
 	if err != nil {
 		return domain.Expense{}, fmt.Errorf("%s: %w", op, err)
 	}
+
+	s.logger.Info(
+		"expense patched",
+		slog.Int64("expense_id", id),
+		slog.Int64("user_id", uid),
+		slog.Int64("account_id", patched.AccountID),
+	)
 
 	return patched, nil
 }

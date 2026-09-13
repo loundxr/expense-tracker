@@ -51,10 +51,10 @@ func (h *ExpensesHTTPHandler) PatchExpense(w http.ResponseWriter, r *http.Reques
 func expensePatchFromRequest(req PatchExpenseRequest) domain.ExpensePatch {
 	var centsAmount domain.Nullable[int64]
 	if req.Amount.Set {
-		inCents := money.ToCents(float64(*req.Amount.Val))
-		centsAmount = domain.Nullable[int64]{
-			Val: &inCents,
-			Set: true,
+		centsAmount.Set = true
+		if req.Amount.Val != nil {
+			inCents := money.ToCents(*req.Amount.Val)
+			centsAmount.Val = &inCents
 		}
 
 	}

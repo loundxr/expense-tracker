@@ -33,6 +33,7 @@ type ExpensesRepository interface {
 	GetExpenses(ctx context.Context, filter domain.ExpenseFilter) ([]domain.Expense, error)
 	GetExpense(ctx context.Context, id int64) (domain.Expense, error)
 	DeleteExpense(ctx context.Context, id int64) error
+	PatchExpense(ctx context.Context, id int64, toPatch domain.Expense) (domain.Expense, error)
 }
 
 type AccountAccessChecker interface {

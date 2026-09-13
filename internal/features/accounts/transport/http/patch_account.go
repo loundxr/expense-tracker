@@ -19,8 +19,8 @@ func (h *AccountsHTTPHandler) PatchAccount(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
-	accountID, err := core_http_request.GetIntPathValue(r, "id")
-	if err != nil || accountID < 0 {
+	accountID, err := core_http_request.GetInt64IDPathValue(r, "id")
+	if err != nil {
 		rh.ErrorResponse(err, "invalid id path value")
 		return
 	}

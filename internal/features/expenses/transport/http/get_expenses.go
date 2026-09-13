@@ -17,8 +17,8 @@ func (h *ExpensesHTTPHandler) GetExpenses(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
-	accountID, err := core_http_request.GetIntPathValue(r, "account_id")
-	if err != nil || accountID <= 0 {
+	accountID, err := core_http_request.GetInt64IDPathValue(r, "account_id")
+	if err != nil {
 		rh.ErrorResponse(err, "invalid 'account_id' path value")
 		return
 	}

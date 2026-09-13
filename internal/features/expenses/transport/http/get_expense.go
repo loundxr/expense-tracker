@@ -13,8 +13,8 @@ func (h *ExpensesHTTPHandler) GetExpense(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
-	id, err := core_http_request.GetIntPathValue(r, "id")
-	if err != nil || id <= 0 {
+	id, err := core_http_request.GetInt64IDPathValue(r, "id")
+	if err != nil {
 		rh.ErrorResponse(err, "invalid 'id' path value")
 		return
 	}

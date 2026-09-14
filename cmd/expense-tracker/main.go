@@ -6,10 +6,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	core_jwt "github.com/loundxr/expense-tracker/internal/core/auth/jwt"
 	core_cache_redis "github.com/loundxr/expense-tracker/internal/core/cache/redis"
+	core_config "github.com/loundxr/expense-tracker/internal/core/config"
 	core_logger "github.com/loundxr/expense-tracker/internal/core/logger"
 	core_pgx_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/loundxr/expense-tracker/internal/core/transport/http/middleware"
@@ -33,6 +35,9 @@ import (
 )
 
 func main() {
+	cfg := utils.Must(core_config.NewConfig())
+	time.Local = cfg.TimeZone
+
 	ctx, stop := signal.NotifyContext(
 		context.Background(),
 		os.Interrupt, syscall.SIGTERM,

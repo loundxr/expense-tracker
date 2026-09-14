@@ -3,6 +3,7 @@ package expenses_service
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/loundxr/expense-tracker/internal/core/domain"
 	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
@@ -42,6 +43,11 @@ func (s *ExpensesService) GetExpenses(
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
+
+	s.logger.Info(
+		"user fetched expenses",
+		slog.Int64("user_id", uid),
+	)
 
 	return expenses, nil
 }

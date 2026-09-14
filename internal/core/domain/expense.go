@@ -68,7 +68,7 @@ func NewUninitializedExpense(
 
 func (e Expense) Validate() error {
 	descLen := len([]rune(e.Description))
-	if descLen < 3 {
+	if e.Description != "" && (descLen < 3 || descLen > 500) {
 		return fmt.Errorf(
 			"invalid description length: %d: %w",
 			descLen,

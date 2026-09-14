@@ -29,6 +29,7 @@ func NewExpensesHTTPHandler(es ExpensesService, l *slog.Logger) *ExpensesHTTPHan
 }
 
 func (h *ExpensesHTTPHandler) RegisterRoutes(r chi.Router) {
+	// TODO: timezone fixes with from/to
 	r.Get("/accounts/{account_id}/expenses", h.GetExpenses)
 	r.Route("/expenses", func(r chi.Router) {
 		r.Post("/", h.CreateExpense)

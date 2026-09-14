@@ -9,12 +9,12 @@ const (
 	userRoleKey contextKey = "user_role"
 )
 
-func SetUserID(ctx context.Context, id int) context.Context {
+func SetUserID(ctx context.Context, id int64) context.Context {
 	return context.WithValue(ctx, userIDKey, id)
 }
 
-func GetUserID(ctx context.Context) int {
-	uid, ok := ctx.Value(userIDKey).(int)
+func GetUserID(ctx context.Context) int64 {
+	uid, ok := ctx.Value(userIDKey).(int64)
 	if !ok {
 		return 0
 	}

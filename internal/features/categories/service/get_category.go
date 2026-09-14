@@ -9,7 +9,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *CategoriesService) GetCategory(ctx context.Context, id int) (domain.Category, error) {
+func (s *CategoriesService) GetCategory(ctx context.Context, id int64) (domain.Category, error) {
 	const op = "categories.service.GetCategory"
 
 	uid := core_ctx.GetUserID(ctx)

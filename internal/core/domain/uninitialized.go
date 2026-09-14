@@ -1,7 +1,7 @@
 package domain
 
 var (
-	uninitializedID     = -1
-	uninitialiedVersion = -1
+	uninitializedID     = int64(-1)
+	uninitialiedVersion = int64(-1)
 	uninitializedRole   = RoleUser
 )

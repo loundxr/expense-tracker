@@ -7,7 +7,7 @@ import (
 	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
 )
 
-func (r *AccountsRepository) RevokeAccess(ctx context.Context, accountID int, targetID int) error {
+func (r *AccountsRepository) RevokeAccess(ctx context.Context, accountID int64, targetID int64) error {
 	const op = "accounts.repository.postgres.RevokeAccess"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

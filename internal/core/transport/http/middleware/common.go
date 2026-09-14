@@ -52,7 +52,7 @@ func AdminOnly(logger *slog.Logger) func(http.Handler) http.Handler {
 			if role != domain.RoleAdmin {
 				logger.Warn(
 					"user unsuccessfully tried to access users list",
-					slog.Int("id", uid),
+					slog.Int64("id", uid),
 				)
 				rh := core_http_response.NewHTTPResponseHandler(w, logger)
 				rh.ErrorResponse(core_errors.ErrForbidden, "admin access required")

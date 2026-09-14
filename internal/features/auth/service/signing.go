@@ -32,7 +32,7 @@ func (s *UsersAuthService) SignIn(ctx context.Context, email, password string) (
 		s.logger.Error("failed to generate token", slog.String("op", op), slog.String("error", err.Error()))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
-	s.logger.Info("user logged in", slog.Int("user_id", user.ID))
+	s.logger.Info("user logged in", slog.Int64("user_id", user.ID))
 
 	return token, nil
 }

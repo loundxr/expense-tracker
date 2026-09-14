@@ -23,7 +23,7 @@ func (h *UsersHTTPHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
-	id, err := core_http_request.GetIntPathValue(r, "id")
+	id, err := core_http_request.GetInt64IDPathValue(r, "id")
 	if err != nil {
 		rh.ErrorResponse(err, "failed to get int path value 'id'")
 		return

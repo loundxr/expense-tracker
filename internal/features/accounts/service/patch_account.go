@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AccountsService) PatchAccount(ctx context.Context, id int, patch domain.AccountPatch) (domain.Account, error) {
+func (s *AccountsService) PatchAccount(ctx context.Context, id int64, patch domain.AccountPatch) (domain.Account, error) {
 	const op = "accounts.service.PatchAccount"
 	uid := core_ctx.GetUserID(ctx)
 	role := core_ctx.GetUserRole(ctx)
@@ -41,8 +41,8 @@ func (s *AccountsService) PatchAccount(ctx context.Context, id int, patch domain
 
 	s.logger.Info(
 		"account patched",
-		slog.Int("actor_id", uid),
-		slog.Int("account_id", patchedAccount.ID),
+		slog.Int64("actor_id", uid),
+		slog.Int64("account_id", patchedAccount.ID),
 		slog.Any("patched_fields", patchedFields),
 	)
 	return patchedAccount, nil

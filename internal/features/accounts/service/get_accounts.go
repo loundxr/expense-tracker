@@ -27,13 +27,13 @@ func (s *AccountsService) GetAccounts(
 	if role == domain.RoleAdmin {
 		s.logger.Info(
 			"admin fetching all system accounts",
-			slog.Int("id", uid),
+			slog.Int64("id", uid),
 		)
 		accounts, err = s.accountsRepository.GetAllAccounts(ctx, limit, offset)
 	} else {
 		s.logger.Info(
 			"user fetching available accounts",
-			slog.Int("id", uid),
+			slog.Int64("id", uid),
 		)
 		accounts, err = s.accountsRepository.GetAccountsByUserID(ctx, uid, limit, offset)
 	}

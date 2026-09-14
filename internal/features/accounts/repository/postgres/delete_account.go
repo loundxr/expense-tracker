@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (r *AccountsRepository) DeleteAccount(ctx context.Context, accountID int) error {
+func (r *AccountsRepository) DeleteAccount(ctx context.Context, accountID int64) error {
 	const op = "accounts.repository.postgres.DeleteAccount"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()

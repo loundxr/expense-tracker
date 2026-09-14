@@ -16,15 +16,15 @@ type AccountsService struct {
 type AccountsRepository interface {
 	CreateAccount(ctx context.Context, account domain.Account) (domain.Account, error)
 	GetAllAccounts(ctx context.Context, limit *int, offset *int) ([]domain.Account, error)
-	GetAccountsByUserID(ctx context.Context, uid int, limit *int, offset *int) ([]domain.Account, error)
-	GetAccountByID(ctx context.Context, id int) (domain.Account, error)
-	DeleteAccount(ctx context.Context, accountID int) error
-	PatchAccount(ctx context.Context, accountID int, toPatch domain.Account) (domain.Account, error)
-	GrantAccess(ctx context.Context, accountID int, targetID int) error
-	RevokeAccess(ctx context.Context, accountID int, targetID int) error
-	HasAccess(ctx context.Context, uid int, accountID int) (bool, error)
-	IsOwner(ctx context.Context, uid int, accountID int) (bool, error)
-	Exists(ctx context.Context, accountID int) error
+	GetAccountsByUserID(ctx context.Context, uid int64, limit *int, offset *int) ([]domain.Account, error)
+	GetAccountByID(ctx context.Context, id int64) (domain.Account, error)
+	DeleteAccount(ctx context.Context, accountID int64) error
+	PatchAccount(ctx context.Context, accountID int64, toPatch domain.Account) (domain.Account, error)
+	GrantAccess(ctx context.Context, accountID int64, targetID int64) error
+	RevokeAccess(ctx context.Context, accountID int64, targetID int64) error
+	HasAccess(ctx context.Context, uid int64, accountID int64) (bool, error)
+	IsOwner(ctx context.Context, uid int64, accountID int64) (bool, error)
+	Exists(ctx context.Context, accountID int64) error
 }
 
 type UserProvider interface {

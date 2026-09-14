@@ -7,8 +7,8 @@ import (
 )
 
 type UserDTOResponse struct {
-	ID        int       `json:"id"`
-	Version   int       `json:"version"`
+	ID        int64     `json:"id"`
+	Version   int64     `json:"version"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
 	Role      string    `json:"role"`

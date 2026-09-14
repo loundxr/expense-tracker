@@ -16,11 +16,11 @@ type AccountsHTTPHandler struct {
 type AccountsService interface {
 	CreateAccount(ctx context.Context, account domain.Account) (domain.Account, error)
 	GetAccounts(ctx context.Context, limit *int, offset *int) ([]domain.Account, error)
-	GetAccount(ctx context.Context, id int) (domain.Account, error)
-	DeleteAccount(ctx context.Context, accountID int) error
-	PatchAccount(ctx context.Context, id int, patch domain.AccountPatch) (domain.Account, error)
-	ShareAccess(ctx context.Context, id int, email string) error
-	RevokeAccess(ctx context.Context, id int, email string) error
+	GetAccount(ctx context.Context, id int64) (domain.Account, error)
+	DeleteAccount(ctx context.Context, accountID int64) error
+	PatchAccount(ctx context.Context, id int64, patch domain.AccountPatch) (domain.Account, error)
+	ShareAccess(ctx context.Context, id int64, email string) error
+	RevokeAccess(ctx context.Context, id int64, email string) error
 }
 
 func NewAccountsHTTPHandler(as AccountsService, l *slog.Logger) *AccountsHTTPHandler {

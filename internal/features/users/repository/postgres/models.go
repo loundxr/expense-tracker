@@ -7,8 +7,8 @@ import (
 )
 
 type UserModel struct {
-	ID           int
-	Version      int
+	ID           int64
+	Version      int64
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time

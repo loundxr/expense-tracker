@@ -12,7 +12,7 @@ import (
 
 func (r *AccountsRepository) PatchAccount(
 	ctx context.Context,
-	accountID int,
+	accountID int64,
 	acc domain.Account,
 ) (domain.Account, error) {
 	const op = "accounts.repository.postgres.PatchAccount"

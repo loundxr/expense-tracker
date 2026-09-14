@@ -41,13 +41,13 @@ func (s *UsersAuthService) SignUp(ctx context.Context, email, password string) (
 	if err != nil {
 		s.logger.Error(
 			"CRITICAL: user created but default account failed",
-			slog.Int("user_id", userDomain.ID),
+			slog.Int64("user_id", userDomain.ID),
 			slog.String("error", err.Error()),
 		)
 	} else {
 		s.logger.Info(
 			"user registered successfully with default 'Personal' account",
-			slog.Int("user_id", userDomain.ID),
+			slog.Int64("user_id", userDomain.ID),
 			slog.String("email", userDomain.Email),
 		)
 	}

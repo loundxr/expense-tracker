@@ -9,7 +9,7 @@ import (
 )
 
 type UserClaims struct {
-	ID   int
+	ID   int64
 	Role string
 }
 
@@ -55,7 +55,7 @@ func ParseToken(tokenString string, secret string) (UserClaims, error) {
 			return UserClaims{}, fmt.Errorf("role claim not found in token")
 		}
 		return UserClaims{
-			ID:   int(uidFloat),
+			ID:   int64(uidFloat),
 			Role: role,
 		}, nil
 	}

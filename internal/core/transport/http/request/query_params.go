@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	core_errors "github.com/loundxr/expense-tracker/internal/core/errors"
 )
@@ -26,6 +27,44 @@ func GetIntQueryParams(r *http.Request, key string) (*int, error) {
 	}
 
 	return &val, nil
+}
+
+func GetInt64QueryParam(r *http.Request, key string) (*int64, error) {
+	param := r.URL.Query().Get(key)
+	if param == "" {
+		return nil, nil
+	}
+
+	val, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"param=%s by key=%s is not a valid int64: %v: %w",
+			param,
+			key,
+			err,
+			core_errors.ErrInvalidArgument,
+		)
+	}
+
+	return &val, nil
+}
+
+func GetDateQueryParams(r *http.Request, key string) (*time.Time, error) {
+	param := r.URL.Query().Get(key)
+	if param == "" {
+		return nil, nil
+	}
+
+	layout := "2006-01-02"
+
+	if t, err := time.Parse(time.RFC3339, param); err == nil {
+		return &t, nil
+	}
+	if t, err := time.Parse(layout, param); err == nil {
+		return &t, nil
+	}
+
+	return nil, fmt.Errorf("invalid date format for %s: %w", key, core_errors.ErrInvalidArgument)
 }
 
 func ValidateLimitOffsetParams(limit *int, offset *int) error {

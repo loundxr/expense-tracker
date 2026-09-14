@@ -8,8 +8,8 @@ import (
 )
 
 type User struct {
-	ID           int
-	Version      int
+	ID           int64
+	Version      int64
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time
@@ -22,8 +22,8 @@ const (
 )
 
 func NewUser(
-	id int,
-	version int,
+	id int64,
+	version int64,
 	email string,
 	passwordHash string,
 	createdAt time.Time,

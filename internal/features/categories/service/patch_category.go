@@ -12,7 +12,7 @@ import (
 
 func (s *CategoriesService) PatchCategory(
 	ctx context.Context,
-	id int,
+	id int64,
 	patch domain.CategoryPatch,
 ) (domain.Category, error) {
 	const op = "categories.service.PatchCategory"
@@ -53,8 +53,8 @@ func (s *CategoriesService) PatchCategory(
 
 	s.logger.Info(
 		"category patched",
-		slog.Int("user_id", uid),
-		slog.Int("category_id", patched.ID),
+		slog.Int64("user_id", uid),
+		slog.Int64("category_id", patched.ID),
 		slog.String("new_name", patched.Name),
 	)
 

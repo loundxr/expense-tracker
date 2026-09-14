@@ -23,7 +23,7 @@ func (r *CategoriesRepository) GetAllCategories(ctx context.Context) ([]domain.C
 	return categories, nil
 }
 
-func (r *CategoriesRepository) GetCategoriesByID(ctx context.Context, uid int) ([]domain.Category, error) {
+func (r *CategoriesRepository) GetCategoriesByID(ctx context.Context, uid int64) ([]domain.Category, error) {
 	const op = "categories.repository.postgres.GetCategoriesByID"
 
 	query := `
@@ -50,7 +50,7 @@ func (r *CategoriesRepository) fetch(ctx context.Context, sql string, args ...an
 	}
 	defer rows.Close()
 
-	var models []CategoryModel
+	models := make([]CategoryModel, 0)
 
 	for rows.Next() {
 		var cm CategoryModel
@@ -65,6 +65,9 @@ func (r *CategoriesRepository) fetch(ctx context.Context, sql string, args ...an
 		}
 
 		models = append(models, cm)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	res := categoryDomainsFromModels(models)

@@ -18,8 +18,8 @@ func (s *AccountsService) CreateAccount(ctx context.Context, account domain.Acco
 
 	s.logger.Info(
 		"account created",
-		slog.Int("account_id", acc.ID),
-		slog.Int("owner_id", acc.UserID),
+		slog.Int64("account_id", acc.ID),
+		slog.Int64("owner_id", acc.UserID),
 	)
 	return acc, nil
 }

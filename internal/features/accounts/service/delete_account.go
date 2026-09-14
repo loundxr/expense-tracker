@@ -10,7 +10,7 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AccountsService) DeleteAccount(ctx context.Context, accountID int) error {
+func (s *AccountsService) DeleteAccount(ctx context.Context, accountID int64) error {
 	const op = "accounts.service.DeleteAccount"
 	uid := core_ctx.GetUserID(ctx)
 	role := core_ctx.GetUserRole(ctx)
@@ -36,8 +36,8 @@ func (s *AccountsService) DeleteAccount(ctx context.Context, accountID int) erro
 
 	s.logger.Info(
 		"account deleted",
-		slog.Int("actor_id", uid),
-		slog.Int("account_id", accountID),
+		slog.Int64("actor_id", uid),
+		slog.Int64("account_id", accountID),
 	)
 
 	return nil

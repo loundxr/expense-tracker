@@ -2,6 +2,22 @@ package domain
 
 import "time"
 
+type Summary struct {
+	AccountID         int64
+	TotalAmount       int64
+	TotalTransactions int64
+	AverageAmount     int64
+	MaxExpense        *MaxExpenseSummary
+	TopCategory       *TopCategorySummary
+}
+
+type CategoryBreakdown struct {
+	CategoryID        int64
+	CategoryName      string
+	TotalAmount       int64
+	TotalTransactions int64
+	Percentage        float64
+}
 type SummaryFilter struct {
 	AccountID int64
 	From      *time.Time
@@ -21,15 +37,6 @@ type TopCategorySummary struct {
 	TotalAmount  int64
 }
 
-type Summary struct {
-	AccountID         int64
-	TotalAmount       int64
-	TotalTransactions int64
-	AverageAmount     int64
-	MaxExpense        *MaxExpenseSummary
-	TopCategory       *TopCategorySummary
-}
-
 func NewSummary(
 	accID, totalAmount, totalTransactions, averageAmount int64,
 	maxExpense *MaxExpenseSummary, topCategory *TopCategorySummary,
@@ -46,6 +53,22 @@ func NewSummary(
 
 func NewUninitializedSummary(accountID int64) Summary {
 	return NewSummary(accountID, uninitStatistics, uninitStatistics, uninitStatistics, nil, nil)
+}
+
+func NewCategoriesBreakdown(
+	categoryID int64,
+	categoryName string,
+	totalAmount int64,
+	totalTransactions int64,
+	percentage float64,
+) CategoryBreakdown {
+	return CategoryBreakdown{
+		CategoryID:        categoryID,
+		CategoryName:      categoryName,
+		TotalAmount:       totalAmount,
+		TotalTransactions: totalTransactions,
+		Percentage:        percentage,
+	}
 }
 
 func NewMaxExpenseSummary(id int64, amount int64, description string, date time.Time) MaxExpenseSummary {

@@ -10,19 +10,17 @@ import (
 	core_http_response "github.com/loundxr/expense-tracker/internal/core/transport/http/response"
 )
 
-type GetSummaryResponse SummaryDTO
-
 func (h *AnalyticsHTTPHandler) Summary(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rh := core_http_response.NewHTTPResponseHandler(w, h.logger)
 
-	id, err := core_http_request.GetInt64IDPathValue(r, "id")
+	accountID, err := core_http_request.GetInt64IDPathValue(r, "account_id")
 	if err != nil {
 		rh.ErrorResponse(err, "invalid 'id' path value")
 		return
 	}
 
-	filter, err := getFilter(r, id)
+	filter, err := getFilter(r, accountID)
 	if err != nil {
 		rh.ErrorResponse(err, "invalid from/to query params")
 		return
@@ -34,7 +32,7 @@ func (h *AnalyticsHTTPHandler) Summary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := GetSummaryResponse(summaryDTOFromDomain(summary))
+	response := summaryDTOFromDomain(summary)
 	rh.JSONResponse(response, http.StatusOK)
 }
 

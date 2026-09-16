@@ -24,6 +24,19 @@ type SummaryFilter struct {
 	To        *time.Time
 }
 
+type TrendsFilter struct {
+	AccountID int64
+	From      *time.Time
+	To        *time.Time
+	Interval  string
+}
+
+type ExpenseTrendPoint struct {
+	Date          time.Time
+	TotalAmount   int64
+	ExpensesCount int64
+}
+
 type MaxExpenseSummary struct {
 	ID          int64
 	Amount      int64
@@ -80,10 +93,27 @@ func NewMaxExpenseSummary(id int64, amount int64, description string, date time.
 	}
 }
 
+func NewExpenseTrendPoint(date time.Time, totalAmount, ExpenseCount int64) ExpenseTrendPoint {
+	return ExpenseTrendPoint{
+		Date:          date,
+		TotalAmount:   totalAmount,
+		ExpensesCount: ExpenseCount,
+	}
+}
+
 func NewSummaryFilter(accID int64, from, to *time.Time) SummaryFilter {
 	return SummaryFilter{
 		AccountID: accID,
 		From:      from,
 		To:        to,
+	}
+}
+
+func NewTrendsFilter(accID int64, from, to *time.Time, interval string) TrendsFilter {
+	return TrendsFilter{
+		AccountID: accID,
+		From:      from,
+		To:        to,
+		Interval:  interval,
 	}
 }

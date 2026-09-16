@@ -16,6 +16,7 @@ type AnalyticsService struct {
 type AnalyticsRepository interface {
 	Summary(ctx context.Context, filter domain.SummaryFilter) (domain.Summary, error)
 	CategoriesBreakdown(ctx context.Context, filter domain.SummaryFilter) ([]domain.CategoryBreakdown, error)
+	Trends(ctx context.Context, filter domain.TrendsFilter) ([]domain.ExpenseTrendPoint, error)
 }
 
 type AccountChecker interface {

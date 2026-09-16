@@ -10,8 +10,9 @@ import (
 	core_ctx "github.com/loundxr/expense-tracker/internal/core/transport/http/context"
 )
 
-func (s *AnalyticsService) CategoriesBreakdown(ctx context.Context, f domain.SummaryFilter) ([]domain.CategoryBreakdown, error) {
-	const op = "analytics.service.CategoriesBreakdown"
+func (s *AnalyticsService) Trends(ctx context.Context, f domain.TrendsFilter) ([]domain.ExpenseTrendPoint, error) {
+	const op = "analytics.service.Trends"
+
 	uid := core_ctx.GetUserID(ctx)
 	role := core_ctx.GetUserRole(ctx)
 
@@ -25,15 +26,15 @@ func (s *AnalyticsService) CategoriesBreakdown(ctx context.Context, f domain.Sum
 		}
 	}
 
-	breakdown, err := s.analyticsRepository.CategoriesBreakdown(ctx, f)
+	points, err := s.analyticsRepository.Trends(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	s.logger.Info(
-		"user generated categories breakdown",
+		"user generated trends analytics",
 		slog.Int64("user_id", uid),
-		slog.Int64("account_id", f.AccountID),
 	)
-	return breakdown, nil
+
+	return points, nil
 }

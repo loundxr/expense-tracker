@@ -7,10 +7,7 @@ import (
 	core_http_response "github.com/loundxr/expense-tracker/internal/core/transport/http/response"
 )
 
-type CategoriesBreakdownResponse struct {
-	AccountID  int64                  `json:"account_id"`
-	Categories []CategoryBreakdownDTO `json:"categories_breakdown"`
-}
+type GetCategoriesBreakdownResponse CategoriesBreakdownDTOResponse
 
 func (h *AnalyticsHTTPHandler) CategoriesBreakdown(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -22,7 +19,7 @@ func (h *AnalyticsHTTPHandler) CategoriesBreakdown(w http.ResponseWriter, r *htt
 		return
 	}
 
-	filter, err := getFilter(r, accountID)
+	filter, err := getSummaryFilter(r, accountID)
 	if err != nil {
 		rh.ErrorResponse(err, "invalid from/to query params")
 		return
@@ -34,7 +31,7 @@ func (h *AnalyticsHTTPHandler) CategoriesBreakdown(w http.ResponseWriter, r *htt
 		return
 	}
 
-	response := CategoriesBreakdownResponse{
+	response := GetCategoriesBreakdownResponse{
 		AccountID:  accountID,
 		Categories: categoriesBreakdownDTOFromDomains(breakdown),
 	}

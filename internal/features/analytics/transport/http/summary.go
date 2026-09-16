@@ -20,7 +20,7 @@ func (h *AnalyticsHTTPHandler) Summary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filter, err := getFilter(r, accountID)
+	filter, err := getSummaryFilter(r, accountID)
 	if err != nil {
 		rh.ErrorResponse(err, "invalid from/to query params")
 		return
@@ -36,7 +36,7 @@ func (h *AnalyticsHTTPHandler) Summary(w http.ResponseWriter, r *http.Request) {
 	rh.JSONResponse(response, http.StatusOK)
 }
 
-func getFilter(r *http.Request, id int64) (domain.SummaryFilter, error) {
+func getSummaryFilter(r *http.Request, id int64) (domain.SummaryFilter, error) {
 	from, err := core_http_request.GetDateQueryParams(r, "from")
 	if err != nil {
 		return domain.SummaryFilter{}, err

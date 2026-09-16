@@ -2,6 +2,7 @@ package domain
 
 import "time"
 
+// Summary entity with constructors
 type Summary struct {
 	AccountID         int64
 	TotalAmount       int64
@@ -9,45 +10,6 @@ type Summary struct {
 	AverageAmount     int64
 	MaxExpense        *MaxExpenseSummary
 	TopCategory       *TopCategorySummary
-}
-
-type CategoryBreakdown struct {
-	CategoryID        int64
-	CategoryName      string
-	TotalAmount       int64
-	TotalTransactions int64
-	Percentage        float64
-}
-type SummaryFilter struct {
-	AccountID int64
-	From      *time.Time
-	To        *time.Time
-}
-
-type TrendsFilter struct {
-	AccountID int64
-	From      *time.Time
-	To        *time.Time
-	Interval  string
-}
-
-type ExpenseTrendPoint struct {
-	Date          time.Time
-	TotalAmount   int64
-	ExpensesCount int64
-}
-
-type MaxExpenseSummary struct {
-	ID          int64
-	Amount      int64
-	Description string
-	Date        time.Time
-}
-
-type TopCategorySummary struct {
-	CategoryID   int64
-	CategoryName string
-	TotalAmount  int64
 }
 
 func NewSummary(
@@ -68,37 +30,11 @@ func NewUninitializedSummary(accountID int64) Summary {
 	return NewSummary(accountID, uninitStatistics, uninitStatistics, uninitStatistics, nil, nil)
 }
 
-func NewCategoriesBreakdown(
-	categoryID int64,
-	categoryName string,
-	totalAmount int64,
-	totalTransactions int64,
-	percentage float64,
-) CategoryBreakdown {
-	return CategoryBreakdown{
-		CategoryID:        categoryID,
-		CategoryName:      categoryName,
-		TotalAmount:       totalAmount,
-		TotalTransactions: totalTransactions,
-		Percentage:        percentage,
-	}
-}
-
-func NewMaxExpenseSummary(id int64, amount int64, description string, date time.Time) MaxExpenseSummary {
-	return MaxExpenseSummary{
-		ID:          id,
-		Amount:      amount,
-		Description: description,
-		Date:        date,
-	}
-}
-
-func NewExpenseTrendPoint(date time.Time, totalAmount, ExpenseCount int64) ExpenseTrendPoint {
-	return ExpenseTrendPoint{
-		Date:          date,
-		TotalAmount:   totalAmount,
-		ExpensesCount: ExpenseCount,
-	}
+// SummaryFilter to create Get Summary request
+type SummaryFilter struct {
+	AccountID int64
+	From      *time.Time
+	To        *time.Time
 }
 
 func NewSummaryFilter(accID int64, from, to *time.Time) SummaryFilter {
@@ -109,6 +45,45 @@ func NewSummaryFilter(accID int64, from, to *time.Time) SummaryFilter {
 	}
 }
 
+// Summary fields
+
+type MaxExpenseSummary struct {
+	ID          int64
+	Amount      int64
+	Description string
+	Date        time.Time
+}
+
+type TopCategorySummary struct {
+	CategoryID   int64
+	CategoryName string
+	TotalAmount  int64
+}
+
+// CategoriesBreakdown entity
+type CategoryBreakdown struct {
+	CategoryID        int64
+	CategoryName      string
+	TotalAmount       int64
+	TotalTransactions int64
+	Percentage        float64
+}
+
+// ExpenseTrendPoint entity
+type ExpenseTrendPoint struct {
+	Date          time.Time
+	TotalAmount   int64
+	ExpensesCount int64
+}
+
+// Trends filter to create Get Trends request
+type TrendsFilter struct {
+	AccountID int64
+	From      *time.Time
+	To        *time.Time
+	Interval  string
+}
+
 func NewTrendsFilter(accID int64, from, to *time.Time, interval string) TrendsFilter {
 	return TrendsFilter{
 		AccountID: accID,
@@ -116,4 +91,13 @@ func NewTrendsFilter(accID int64, from, to *time.Time, interval string) TrendsFi
 		To:        to,
 		Interval:  interval,
 	}
+}
+
+// MemberContribution entity with
+type MemberContribution struct {
+	UserID        int64
+	Email         string
+	TotalAmount   int64
+	ExpensesCount int64
+	Percentage    float64
 }

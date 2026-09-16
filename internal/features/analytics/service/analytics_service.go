@@ -17,6 +17,7 @@ type AnalyticsRepository interface {
 	Summary(ctx context.Context, filter domain.SummaryFilter) (domain.Summary, error)
 	CategoriesBreakdown(ctx context.Context, filter domain.SummaryFilter) ([]domain.CategoryBreakdown, error)
 	Trends(ctx context.Context, filter domain.TrendsFilter) ([]domain.ExpenseTrendPoint, error)
+	MembersContribution(ctx context.Context, filter domain.SummaryFilter) ([]domain.MemberContribution, error)
 }
 
 type AccountChecker interface {

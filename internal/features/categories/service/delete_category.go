@@ -1,4 +1,4 @@
-package categories_service
+package service
 
 import (
 	"context"

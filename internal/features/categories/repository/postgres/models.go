@@ -1,4 +1,4 @@
-package categories_repository_postgres
+package repository
 
 import (
 	"time"

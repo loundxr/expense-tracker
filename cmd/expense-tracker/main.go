@@ -16,24 +16,12 @@ import (
 	core_pgx_pool "github.com/loundxr/expense-tracker/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/loundxr/expense-tracker/internal/core/transport/http/middleware"
 	core_http_server "github.com/loundxr/expense-tracker/internal/core/transport/http/server"
-	accounts_repository_postgres "github.com/loundxr/expense-tracker/internal/features/accounts/repository/postgres"
-	accounts_service "github.com/loundxr/expense-tracker/internal/features/accounts/service"
-	accounts_transport_http "github.com/loundxr/expense-tracker/internal/features/accounts/transport/http"
-	analytics_repository_postgres "github.com/loundxr/expense-tracker/internal/features/analytics/repository/postgres"
-	analytics_service "github.com/loundxr/expense-tracker/internal/features/analytics/service"
-	analytics_transport_http "github.com/loundxr/expense-tracker/internal/features/analytics/transport/http"
-	auth_repository_postgres "github.com/loundxr/expense-tracker/internal/features/auth/repository/postgres"
-	auth_service "github.com/loundxr/expense-tracker/internal/features/auth/service"
-	auth_transport_http "github.com/loundxr/expense-tracker/internal/features/auth/transport/http"
-	categories_repository_postgres "github.com/loundxr/expense-tracker/internal/features/categories/repository/postgres"
-	categories_service "github.com/loundxr/expense-tracker/internal/features/categories/service"
-	categories_transport_http "github.com/loundxr/expense-tracker/internal/features/categories/transport/http"
-	expenses_repository_postgres "github.com/loundxr/expense-tracker/internal/features/expenses/repository/postgres"
-	expenses_service "github.com/loundxr/expense-tracker/internal/features/expenses/service"
-	expenses_transport_http "github.com/loundxr/expense-tracker/internal/features/expenses/transport/http"
-	users_repository_postgres "github.com/loundxr/expense-tracker/internal/features/users/repository/postgres"
-	users_service "github.com/loundxr/expense-tracker/internal/features/users/service"
-	users_transport_http "github.com/loundxr/expense-tracker/internal/features/users/transport/http"
+	"github.com/loundxr/expense-tracker/internal/features/accounts"
+	"github.com/loundxr/expense-tracker/internal/features/analytics"
+	"github.com/loundxr/expense-tracker/internal/features/auth"
+	"github.com/loundxr/expense-tracker/internal/features/categories"
+	"github.com/loundxr/expense-tracker/internal/features/expenses"
+	"github.com/loundxr/expense-tracker/internal/features/users"
 	"github.com/loundxr/expense-tracker/internal/utils"
 )
 
@@ -79,40 +67,52 @@ func main() {
 
 	// users feature initialization
 	logger.Debug("initializing feature users", slog.String("feature", "users"))
-	usersRepo := users_repository_postgres.NewUsersRepository(pool)
-	usersSvc := users_service.NewUsersService(usersRepo, logger)
-	usersHandler := users_transport_http.NewUsersHTTPHandler(usersSvc, logger)
+	usersModule := users.New(users.Dependencies{
+		Pool:   pool,
+		Logger: logger,
+	})
 
 	// account feature initialization
 	logger.Debug("initializing feature accounts", slog.String("feature", "accounts"))
-	accountsRepo := accounts_repository_postgres.NewAccountsRepository(pool)
-	accountsSvc := accounts_service.NewAccountsService(accountsRepo, usersRepo, logger)
-	accountsHandler := accounts_transport_http.NewAccountsHTTPHandler(accountsSvc, logger)
+	accountsModule := accounts.New(accounts.Dependencies{
+		Pool:         pool,
+		Logger:       logger,
+		UserProvider: usersModule.Repository(),
+	})
 
 	// auth feature initialization
 	logger.Debug("initializing feature auth", slog.String("feature", "auth"))
 	jwtCfg := utils.Must(core_jwt.NewConfig())
-	authRepo := auth_repository_postgres.NewUsersAuthRepository(pool)
-	authSvc := auth_service.NewUsersAuthService(authRepo, accountsSvc, logger, jwtCfg)
-	authHandler := auth_transport_http.NewUsersAuthHandler(authSvc, logger)
+	authModule := auth.New(auth.Dependencies{
+		JWTConfig:      jwtCfg,
+		Logger:         logger,
+		Pool:           pool,
+		AccountCreator: accountsModule.Service(),
+	})
 
 	// categories feature initialization
 	logger.Debug("initializing feature categories", slog.String("feature", "categories"))
-	categoriesRepo := categories_repository_postgres.NewCategoriesRepository(pool)
-	categoriesSvc := categories_service.NewCategoriesService(categoriesRepo, logger)
-	categoriesHandler := categories_transport_http.NewCategoriesHTTPHandler(categoriesSvc, logger)
+	categoriesModule := categories.New(categories.Dependencies{
+		Pool:   pool,
+		Logger: logger,
+	})
 
 	// expenses feature initialization
 	logger.Debug("initializing feature expenses", slog.String("feature", "expenses"))
-	expensesRepo := expenses_repository_postgres.NewExpensesRepository(pool)
-	expensesSvc := expenses_service.NewExpensesService(expensesRepo, accountsRepo, categoriesRepo, logger)
-	expensesHandler := expenses_transport_http.NewExpensesHTTPHandler(expensesSvc, logger)
+	expensesModule := expenses.New(expenses.Dependencies{
+		Pool:            pool,
+		Logger:          logger,
+		AccountChecker:  accountsModule.Repository(),
+		CategoryChecker: categoriesModule.Repository(),
+	})
 
 	//analytics feature initialization
 	logger.Debug("initializing feature analytics", slog.String("feature", "analytics"))
-	analyticsRepo := analytics_repository_postgres.NewAnalyticsRepository(pool)
-	analyticsSvc := analytics_service.NewAnalyticsService(analyticsRepo, accountsRepo, logger)
-	analyticsHandler := analytics_transport_http.NewStatisticsHTTPHandler(analyticsSvc, logger)
+	analyticsModule := analytics.New(analytics.Dependencies{
+		Pool:           pool,
+		Logger:         logger,
+		AccountChecker: accountsModule.Repository(),
+	})
 
 	// http server initialization
 	logger.Debug("initializing HTTP server")
@@ -123,14 +123,14 @@ func main() {
 	)
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.APIVersion1)
-	authHandler.RegisterRoutes(apiVersionRouter.Router())
+	authModule.RegisterRoutes(apiVersionRouter.Router())
 	apiVersionRouter.Router().Group(func(r chi.Router) {
 		r.Use(core_http_middleware.Auth(jwtCfg.Secret, logger))
-		usersHandler.RegisterRoutes(r)
-		accountsHandler.RegisterRoutes(r)
-		categoriesHandler.RegisterRoutes(r)
-		expensesHandler.RegisterRoutes(r)
-		analyticsHandler.RegisterRoutes(r)
+		usersModule.RegisterRoutes(r)
+		accountsModule.RegisterRoutes(r)
+		categoriesModule.RegisterRoutes(r)
+		expensesModule.RegisterRoutes(r)
+		analyticsModule.RegisterRoutes(r)
 	})
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)

@@ -1,4 +1,4 @@
-package accounts_repository_postgres
+package repository
 
 import (
 	"time"

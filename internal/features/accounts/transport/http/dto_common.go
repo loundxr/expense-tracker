@@ -1,4 +1,4 @@
-package accounts_transport_http
+package transport
 
 import (
 	"time"

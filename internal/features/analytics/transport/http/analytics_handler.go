@@ -1,4 +1,4 @@
-package analytics_transport_http
+package transport
 
 import (
 	"context"
@@ -20,7 +20,7 @@ type AnalyticsService interface {
 	MembersContribution(ctx context.Context, filter domain.SummaryFilter) ([]domain.MemberContribution, error)
 }
 
-func NewStatisticsHTTPHandler(as AnalyticsService, l *slog.Logger) *AnalyticsHTTPHandler {
+func NewAnalyticsHTTPHandler(as AnalyticsService, l *slog.Logger) *AnalyticsHTTPHandler {
 	return &AnalyticsHTTPHandler{
 		analyticsService: as,
 		logger:           l,

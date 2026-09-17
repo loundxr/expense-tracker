@@ -1,4 +1,4 @@
-package users_transport_http
+package transport
 
 import (
 	"net/http"

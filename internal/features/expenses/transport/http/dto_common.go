@@ -1,4 +1,4 @@
-package expenses_transport_http
+package transport
 
 import (
 	"time"

@@ -1,4 +1,4 @@
-package expenses_service
+package service
 
 import (
 	"context"

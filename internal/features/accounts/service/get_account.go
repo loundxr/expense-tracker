@@ -1,4 +1,4 @@
-package accounts_service
+package service
 
 import (
 	"context"

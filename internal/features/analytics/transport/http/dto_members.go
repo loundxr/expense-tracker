@@ -1,4 +1,4 @@
-package analytics_transport_http
+package transport
 
 import (
 	"github.com/loundxr/expense-tracker/internal/core/domain"

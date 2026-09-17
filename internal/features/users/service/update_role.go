@@ -1,4 +1,4 @@
-package users_service
+package service
 
 import (
 	"context"
@@ -34,7 +34,7 @@ func (s *UsersService) UpdateUserRole(ctx context.Context, id int64, role string
 
 	updatedUser, err := s.usersRepository.PatchUser(ctx, id, user)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("%s: %w", err)
+		return domain.User{}, fmt.Errorf("%s: %w", op, err)
 	}
 
 	s.logger.Warn(

@@ -1,4 +1,4 @@
-package categories_transport_http
+package transport
 
 import (
 	"context"

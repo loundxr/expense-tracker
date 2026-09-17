@@ -1,4 +1,4 @@
-package users_repository_postgres
+package repository
 
 import (
 	"context"

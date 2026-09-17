@@ -6,11 +6,11 @@ dotenv: [".env"]
 
 vars:
   APP_NAME: "expense-tracker"
-  MAIN_PATH: "./cmd/{{.APP_NAME}}"   
-  LOG_DIR: "./out/logs" 
-  
+  MAIN_PATH: "./cmd/{{.APP_NAME}}"
+  LOG_DIR: "./out/logs"
+
 env:
-  PROJECT_ROOT: '{{.TASKFILE_DIR}}'
+  PROJECT_ROOT: "{{.TASKFILE_DIR}}"
 
 tasks:
   dev:
@@ -25,7 +25,7 @@ tasks:
     cmds:
       - mkdir -p {{.LOG_DIR}}
       - go run {{.MAIN_PATH}}/main.go
-  
+
   # --- docker-compose ---
   env-up:
     desc: "Run Postgres and Redis containers"
@@ -38,11 +38,16 @@ tasks:
     desc: "Stop Postgres and Redis containers"
     cmds:
       - docker compose down
-  
+
   compose-up:
-    desc: "Run docker-compose up"
+    desc: "Run docker compose up"
     cmds:
       - docker compose -f docker-compose.yaml up -d
+
+  compose-down:
+    desc: "Run docker compose down"
+    cmds:
+      - docker compose -f docker-compose.yaml down --rmi local
 
   # --- migrations ---
   migrate:
@@ -53,7 +58,7 @@ tasks:
         -path=/migrations \
         -database "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable" \
         {{.ACTION}}
-  
+
   migrate-up:
     desc: "Apply all the up migrations"
     cmds:
@@ -69,10 +74,10 @@ tasks:
           ACTION: "down 1"
 
   migrate-force:
-      cmds:
-        - task: migrate
-          vars:
-            ACTION: "force {{.CLI_ARGS}}"
+    cmds:
+      - task: migrate
+        vars:
+          ACTION: "force {{.CLI_ARGS}}"
 
   migrate-version:
     desc: "Show the current migration version"
@@ -91,7 +96,7 @@ tasks:
           exit 1; \
         fi
         docker compose run --rm expense-tracker-postgres-migrate create -ext sql -dir /migrations -seq {{.seq}}
-  
+
   # --- utils ---
   logs-clean:
     desc: "Clean up all log files from LOG_DIR"

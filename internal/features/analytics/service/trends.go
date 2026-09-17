@@ -1,4 +1,4 @@
-package analytics_service
+package service
 
 import (
 	"context"

@@ -1,3 +1,6 @@
 .env
-out
+out/
+logs/
+*.exe
+*.log
 .vscode

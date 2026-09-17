@@ -1,4 +1,4 @@
-package analytics_transport_http
+package transport
 
 import (
 	"fmt"

@@ -6,21 +6,22 @@ services:
     container_name: expense-tracker
     environment:
       - HTTP_ADDR=:8787
-      # - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
-      # - HTTP_ALLOWED_ORIGINS=${HTTP_ALLOWED_ORIGINS}
+      - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
       - POSTGRES_HOST=expense-tracker-postgres
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PORT=${POSTGRES_PORT}
-      - REDIS_HOST=expense-tracker-cache-redis
+      - REDIS_HOST=expense-tracker-cache
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      # - LOGGER_LEVEL=${LOGGER_LEVEL}
-      # - LOGGER_FOLDER=/app/out/logs
-      # - TIME_ZONE=${TIME_ZONE}
-      # volumes:
-      #   - ${PROJECT_ROOT}/out/logs:/app/out/logs
+      - LOGGER_LEVEL=${LOGGER_LEVEL}
+      - LOGGER_FOLDER=/app/out/logs
+      - TIME_ZONE=${TIME_ZONE}
+      - JWT_TTL=${JWT_TTL}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ${PROJECT_ROOT}/out/logs:/app/out/logs
     ports:
       - "${SERVER_PORT}:8787"
     restart: always

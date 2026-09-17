@@ -35,7 +35,7 @@ func main() {
 	)
 	defer stop()
 
-	// logger initialization
+	// logger
 	logCfg, err := core_logger.NewConfig()
 	if err != nil {
 		slog.Error("failed to load logger config", slog.String("error", err.Error()))
@@ -45,7 +45,7 @@ func main() {
 
 	logger.Info("expense-tracker app", slog.String("env", logCfg.Env))
 
-	// postgres pool connection initialization
+	// postgres pool connection
 	logger.Debug("initializing postgres connection pool")
 	pool, err := core_pgx_pool.New(ctx, utils.Must(core_pgx_pool.NewConfig()))
 	if err != nil {
@@ -55,7 +55,7 @@ func main() {
 	defer pool.Close()
 	logger.Info("postgres pool established")
 
-	// redis connection initialization
+	// redis connection
 	logger.Debug("initializing redis connection")
 	cache, err := core_cache_redis.New(utils.Must(core_cache_redis.NewConfig()))
 	if err != nil {
@@ -65,14 +65,14 @@ func main() {
 	defer cache.Close()
 	logger.Info("redis connection established")
 
-	// users feature initialization
+	// users feature
 	logger.Debug("initializing feature users", slog.String("feature", "users"))
 	usersModule := users.New(users.Dependencies{
 		Pool:   pool,
 		Logger: logger,
 	})
 
-	// account feature initialization
+	// account feature
 	logger.Debug("initializing feature accounts", slog.String("feature", "accounts"))
 	accountsModule := accounts.New(accounts.Dependencies{
 		Pool:         pool,
@@ -80,7 +80,7 @@ func main() {
 		UserProvider: usersModule.Repository(),
 	})
 
-	// auth feature initialization
+	// auth feature
 	logger.Debug("initializing feature auth", slog.String("feature", "auth"))
 	jwtCfg := utils.Must(core_jwt.NewConfig())
 	authModule := auth.New(auth.Dependencies{
@@ -90,14 +90,14 @@ func main() {
 		AccountCreator: accountsModule.Service(),
 	})
 
-	// categories feature initialization
+	// categories feature
 	logger.Debug("initializing feature categories", slog.String("feature", "categories"))
 	categoriesModule := categories.New(categories.Dependencies{
 		Pool:   pool,
 		Logger: logger,
 	})
 
-	// expenses feature initialization
+	// expenses feature
 	logger.Debug("initializing feature expenses", slog.String("feature", "expenses"))
 	expensesModule := expenses.New(expenses.Dependencies{
 		Pool:            pool,
@@ -106,7 +106,7 @@ func main() {
 		CategoryChecker: categoriesModule.Repository(),
 	})
 
-	//analytics feature initialization
+	//analytics feature
 	logger.Debug("initializing feature analytics", slog.String("feature", "analytics"))
 	analyticsModule := analytics.New(analytics.Dependencies{
 		Pool:           pool,
@@ -114,7 +114,7 @@ func main() {
 		AccountChecker: accountsModule.Repository(),
 	})
 
-	// http server initialization
+	// http server
 	logger.Debug("initializing HTTP server")
 	httpConfig := utils.Must(core_http_server.NewConfig())
 	httpServer := core_http_server.NewHTTPServer(

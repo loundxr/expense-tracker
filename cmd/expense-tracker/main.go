@@ -19,6 +19,9 @@ import (
 	accounts_repository_postgres "github.com/loundxr/expense-tracker/internal/features/accounts/repository/postgres"
 	accounts_service "github.com/loundxr/expense-tracker/internal/features/accounts/service"
 	accounts_transport_http "github.com/loundxr/expense-tracker/internal/features/accounts/transport/http"
+	analytics_repository_postgres "github.com/loundxr/expense-tracker/internal/features/analytics/repository/postgres"
+	analytics_service "github.com/loundxr/expense-tracker/internal/features/analytics/service"
+	analytics_transport_http "github.com/loundxr/expense-tracker/internal/features/analytics/transport/http"
 	auth_repository_postgres "github.com/loundxr/expense-tracker/internal/features/auth/repository/postgres"
 	auth_service "github.com/loundxr/expense-tracker/internal/features/auth/service"
 	auth_transport_http "github.com/loundxr/expense-tracker/internal/features/auth/transport/http"
@@ -105,6 +108,12 @@ func main() {
 	expensesSvc := expenses_service.NewExpensesService(expensesRepo, accountsRepo, categoriesRepo, logger)
 	expensesHandler := expenses_transport_http.NewExpensesHTTPHandler(expensesSvc, logger)
 
+	//analytics feature initialization
+	logger.Debug("initializing feature analytics", slog.String("feature", "analytics"))
+	analyticsRepo := analytics_repository_postgres.NewAnalyticsRepository(pool)
+	analyticsSvc := analytics_service.NewAnalyticsService(analyticsRepo, accountsRepo, logger)
+	analyticsHandler := analytics_transport_http.NewStatisticsHTTPHandler(analyticsSvc, logger)
+
 	// http server initialization
 	logger.Debug("initializing HTTP server")
 	httpConfig := utils.Must(core_http_server.NewConfig())
@@ -121,6 +130,7 @@ func main() {
 		accountsHandler.RegisterRoutes(r)
 		categoriesHandler.RegisterRoutes(r)
 		expensesHandler.RegisterRoutes(r)
+		analyticsHandler.RegisterRoutes(r)
 	})
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)

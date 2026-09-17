@@ -109,6 +109,8 @@ The application follows a **Modular Monolith** pattern incorporating **Clean Arc
 
 ```text
 .
+├── api/
+│   └── expense-tracker.postman_collection.json     # Pre-configured Postman collection
 ├── cmd/
 │   └── expense-tracker/
 │       ├── main.go               # Application entry point & Composition Root

@@ -289,5 +289,4 @@ Planned improvements for upcoming iterations:
 
 - [ ] **Cross-Feature Database Transactions:** Wrap `User` creation and default `Account` provisioning in a single atomic database transaction (`WithinTransaction`).
 - [ ] **Dynamic Token Invalidation via Redis:** Invalidate active JWTs upon role downgrade using Redis-backed timestamp checks (`iat`).
-- [ ] **Shared Category Scope:** Allow members of a shared account to use each other's custom categories within that account.
 - [ ] **Multi-Currency & Exchange Rates:** Integrate an external exchange rate API and cache conversion rates in Redis (1h TTL).

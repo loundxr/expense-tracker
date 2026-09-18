@@ -13,7 +13,7 @@ func (r *ExpensesRepository) GetExpenses(ctx context.Context, filter domain.Expe
 	defer cancel()
 
 	query := `
-	SELECT id, version, account_id, category_id,
+	SELECT id, version, account_id, user_id, category_id,
 		amount, currency, description, date, created_at
 	FROM expense_tracker.expenses
 	WHERE account_id=$1
@@ -42,6 +42,7 @@ func (r *ExpensesRepository) GetExpenses(ctx context.Context, filter domain.Expe
 			&em.ID,
 			&em.Version,
 			&em.AccountID,
+			&em.UserID,
 			&em.CategoryID,
 			&em.Amount,
 			&em.Currency,

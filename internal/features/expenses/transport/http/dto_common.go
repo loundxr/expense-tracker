@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/loundxr/expense-tracker/internal/core/domain"
+	"github.com/loundxr/expense-tracker/internal/utils/money"
 )
 
 type ExpenseDTOResponse struct {
@@ -12,7 +13,7 @@ type ExpenseDTOResponse struct {
 	AccountID   int64     `json:"account_id"`
 	UserID      int64     `json:"user_id"`
 	CategoryID  int64     `json:"category_id"`
-	Amount      int64     `json:"amount"`
+	Amount      float64   `json:"amount"`
 	Currency    string    `json:"currency"`
 	Description string    `json:"description"`
 	Date        time.Time `json:"date"`
@@ -26,7 +27,7 @@ func expenseDTOFromDomain(e domain.Expense) ExpenseDTOResponse {
 		AccountID:   e.AccountID,
 		UserID:      e.UserID,
 		CategoryID:  e.CategoryID,
-		Amount:      e.Amount,
+		Amount:      money.ToUnits(e.Amount),
 		Currency:    e.Currency,
 		Description: e.Description,
 		Date:        e.Date,

@@ -11,7 +11,9 @@ import (
 )
 
 // TODO: return a struct with a '..list..' field for the future scaling
-type GetExpensesResponse []ExpenseDTOResponse
+type GetExpensesResponse struct {
+	Expenses []ExpenseDTOResponse `json:"expenses"`
+}
 
 func (h *ExpensesHTTPHandler) GetExpenses(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -35,7 +37,7 @@ func (h *ExpensesHTTPHandler) GetExpenses(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	response := GetExpensesResponse(expenseDTOsFromDomains(expenses))
+	response := NewGetExpensesResponse(expenseDTOsFromDomains(expenses))
 	rh.JSONResponse(response, http.StatusOK)
 }
 
@@ -83,4 +85,13 @@ func getFilter(r *http.Request, accountID int64) (domain.ExpenseFilter, error) {
 		limit,
 		offset,
 	), nil
+}
+
+func NewGetExpensesResponse(expenses []ExpenseDTOResponse) GetExpensesResponse {
+	if expenses == nil {
+		expenses = make([]ExpenseDTOResponse, 0)
+	}
+	return GetExpensesResponse{
+		Expenses: expenses,
+	}
 }

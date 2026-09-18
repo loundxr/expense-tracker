@@ -1,6 +1,9 @@
 package transport
 
-import "github.com/loundxr/expense-tracker/internal/core/domain"
+import (
+	"github.com/loundxr/expense-tracker/internal/core/domain"
+	"github.com/loundxr/expense-tracker/internal/utils/money"
+)
 
 type CategoriesBreakdownDTOResponse struct {
 	AccountID  int64                  `json:"account_id"`
@@ -10,7 +13,7 @@ type CategoriesBreakdownDTOResponse struct {
 type CategoryBreakdownDTO struct {
 	CategoryID        int64   `json:"category_id"`
 	CategoryName      string  `json:"category_name"`
-	TotalAmount       int64   `json:"total_amount"`
+	TotalAmount       float64 `json:"total_amount"`
 	TotalTransactions int64   `json:"total_transactions"`
 	Percentage        float64 `json:"percentage"`
 }
@@ -27,7 +30,7 @@ func categoryBreakdownDTOFromDomain(b domain.CategoryBreakdown) CategoryBreakdow
 	return CategoryBreakdownDTO{
 		CategoryID:        b.CategoryID,
 		CategoryName:      b.CategoryName,
-		TotalAmount:       b.TotalAmount,
+		TotalAmount:       money.ToUnits(b.TotalAmount),
 		TotalTransactions: b.TotalTransactions,
 		Percentage:        b.Percentage,
 	}

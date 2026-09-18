@@ -43,19 +43,28 @@ func (r *CategoriesRepository) GetCategory(ctx context.Context, id int64) (domai
 }
 
 // TODO: fix category scope for account, not only for creator
-func (r *CategoriesRepository) HasAccess(ctx context.Context, uid, categoryID int64) (bool, error) {
+func (r *CategoriesRepository) HasAccess(ctx context.Context, uid, categoryID, accountID int64) (bool, error) {
 	const op = "categories.repository.postgres.HasAccess"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()
 
 	query := `
 	SELECT EXISTS (
-		SELECT 1 FROM expense_tracker.categories
-		WHERE id=$1 AND (user_id=$2 OR user_id IS NULL)
+		SELECT 1 FROM expense_tracker.categories c
+		WHERE id=$1 
+			AND (
+				user_id=$2 
+				OR user_id IS NULL
+				OR c.user_id IN (
+					SELECT au.user_id
+					FROM expense_tracker.account_users au
+					WHERE au.account_id=$3
+					)
+				)
 	);`
 
 	var exists bool
-	err := r.pool.QueryRow(ctx, query, categoryID, uid).Scan(&exists)
+	err := r.pool.QueryRow(ctx, query, categoryID, uid, accountID).Scan(&exists)
 	if err != nil {
 		return false, fmt.Errorf("%s: %w", op, err)
 	}

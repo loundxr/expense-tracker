@@ -29,7 +29,7 @@ func (s *ExpensesService) PatchExpense(ctx context.Context, id int64, p domain.E
 	}
 
 	if p.CategoryID.Set && p.CategoryID.Val != nil {
-		hasAccess, err := s.catChecker.HasAccess(ctx, uid, *p.CategoryID.Val)
+		hasAccess, err := s.catChecker.HasAccess(ctx, uid, *p.CategoryID.Val, expense.AccountID)
 		if err != nil || !hasAccess {
 			return domain.Expense{}, fmt.Errorf("%s: %w", op, core_errors.ErrCategoryNotFound)
 		}

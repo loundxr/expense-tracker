@@ -10,7 +10,6 @@ import (
 	core_http_response "github.com/loundxr/expense-tracker/internal/core/transport/http/response"
 )
 
-// TODO: return a struct with a '..list..' field for the future scaling
 type GetExpensesResponse struct {
 	Expenses []ExpenseDTOResponse `json:"expenses"`
 }

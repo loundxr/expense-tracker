@@ -42,7 +42,6 @@ func (r *CategoriesRepository) GetCategory(ctx context.Context, id int64) (domai
 	return categoryDomain, nil
 }
 
-// TODO: fix category scope for account, not only for creator
 func (r *CategoriesRepository) HasAccess(ctx context.Context, uid, categoryID, accountID int64) (bool, error) {
 	const op = "categories.repository.postgres.HasAccess"
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())

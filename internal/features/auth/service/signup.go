@@ -25,8 +25,24 @@ func (s *UsersAuthService) SignUp(ctx context.Context, email, password string) (
 	}
 
 	uninitUser := domain.NewUninitializedUser(email, string(passHash))
+	var userDomain domain.User
 
-	userDomain, err := s.usersRepository.CreateUser(ctx, uninitUser)
+	err = s.transactor.WithinTransaction(ctx, func(txCtx context.Context) error {
+		var err error
+		userDomain, err = s.usersRepository.CreateUser(txCtx, uninitUser)
+		if err != nil {
+			return err
+		}
+
+		defaultAccount := domain.NewUninitializedAccount("Personal", userDomain.ID)
+		_, err = s.accountCreator.CreateAccount(txCtx, defaultAccount)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		if errors.Is(err, core_errors.ErrAlreadyExists) {
 			return domain.User{}, fmt.Errorf("%s: %w", op, err)
@@ -34,23 +50,11 @@ func (s *UsersAuthService) SignUp(ctx context.Context, email, password string) (
 		return domain.User{}, fmt.Errorf("failed to create user: %s: %w", op, err)
 	}
 
-	// TODO: implement a transactions (account + user creation)
-	defaultAccount := domain.NewUninitializedAccount("Personal", userDomain.ID)
-	defaultAccount.UserID = userDomain.ID
-	_, err = s.accountCreator.CreateAccount(ctx, defaultAccount)
-	if err != nil {
-		s.logger.Error(
-			"CRITICAL: user created but default account failed",
-			slog.Int64("user_id", userDomain.ID),
-			slog.String("error", err.Error()),
-		)
-	} else {
-		s.logger.Info(
-			"user registered successfully with default 'Personal' account",
-			slog.Int64("user_id", userDomain.ID),
-			slog.String("email", userDomain.Email),
-		)
-	}
+	s.logger.Info(
+		"user registered successfully with default 'Personal' account",
+		slog.Int64("user_id", userDomain.ID),
+		slog.String("email", userDomain.Email),
+	)
 
 	return userDomain, nil
 }

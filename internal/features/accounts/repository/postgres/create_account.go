@@ -15,12 +15,6 @@ func (r *AccountsRepository) CreateAccount(ctx context.Context, a domain.Account
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OperationTimeout())
 	defer cancel()
 
-	tx, err := r.pool.Begin(ctx)
-	if err != nil {
-		return domain.Account{}, fmt.Errorf("%s: begin tx: %w", op, err)
-	}
-	defer tx.Rollback(ctx)
-
 	queryAccount := `
 	INSERT INTO expense_tracker.accounts (name, user_id, created_at)
 	VALUES ($1, $2, $3)
@@ -29,7 +23,7 @@ func (r *AccountsRepository) CreateAccount(ctx context.Context, a domain.Account
 	row := r.pool.QueryRow(ctx, queryAccount, a.Name, a.UserID, a.CreatedAt)
 
 	var am AccountModel
-	err = row.Scan(
+	err := row.Scan(
 		&am.ID,
 		&am.Version,
 		&am.Name,
@@ -65,9 +59,6 @@ func (r *AccountsRepository) CreateAccount(ctx context.Context, a domain.Account
 		return domain.Account{}, fmt.Errorf("%s: insert access: %w", op, err)
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		return domain.Account{}, fmt.Errorf("%s: commit: %w", op, err)
-	}
 	accDomain := accountDomainFromModel(am)
 
 	return accDomain, nil

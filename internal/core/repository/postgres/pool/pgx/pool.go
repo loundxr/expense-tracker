@@ -65,6 +65,10 @@ func (p *Pool) QueryRow(
 	sql string,
 	args ...any,
 ) core_postgres_pool.Row {
+	if tx, ok := extractTx(ctx); ok {
+		return tx.QueryRow(ctx, sql, args...)
+	}
+
 	row := p.Pool.QueryRow(ctx, sql, args...)
 	return pgxRow{row}
 }
@@ -74,6 +78,10 @@ func (p *Pool) Exec(
 	sql string,
 	arguments ...any,
 ) (core_postgres_pool.CommandTag, error) {
+	if tx, ok := extractTx(ctx); ok {
+		return tx.Exec(ctx, sql, arguments...)
+	}
+
 	comTag, err := p.Pool.Exec(ctx, sql, arguments...)
 	if err != nil {
 		return nil, mapErrors(err)
@@ -81,7 +89,7 @@ func (p *Pool) Exec(
 	return pgconnCommandTag{comTag}, nil
 }
 
-func (p *Pool) Begin(ctx context.Context) (core_postgres_pool.Tx, error) {
+func (p *Pool) Begin(ctx context.Context) (core_postgres_pool.Transaction, error) {
 	tx, err := p.Pool.Begin(ctx)
 	if err != nil {
 		return nil, mapErrors(err)

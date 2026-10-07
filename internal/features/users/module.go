@@ -13,6 +13,7 @@ import (
 type Dependencies struct {
 	Pool   core_postgres_pool.Pool
 	Logger *slog.Logger
+	Cache  service.Cache
 }
 
 type Module struct {
@@ -23,7 +24,7 @@ type Module struct {
 
 func New(deps Dependencies) *Module {
 	repo := repository.NewUsersRepository(deps.Pool)
-	svc := service.NewUsersService(repo, deps.Logger)
+	svc := service.NewUsersService(repo, deps.Cache, deps.Logger)
 	h := transport.NewUsersHTTPHandler(svc, deps.Logger)
 
 	return &Module{

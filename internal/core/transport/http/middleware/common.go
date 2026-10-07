@@ -1,8 +1,11 @@
 package core_http_middleware
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"strings"
 
 	core_jwt "github.com/loundxr/expense-tracker/internal/core/auth/jwt"
@@ -12,7 +15,11 @@ import (
 	core_http_response "github.com/loundxr/expense-tracker/internal/core/transport/http/response"
 )
 
-func Auth(secret string, logger *slog.Logger) func(http.Handler) http.Handler {
+type RevokeChecker interface {
+	Get(ctx context.Context, key string) (string, error)
+}
+
+func Auth(secret string, cache RevokeChecker, logger *slog.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rh := core_http_response.NewHTTPResponseHandler(w, logger)
@@ -36,6 +43,24 @@ func Auth(secret string, logger *slog.Logger) func(http.Handler) http.Handler {
 			}
 
 			ctx := r.Context()
+
+			revokeKey := fmt.Sprintf("auth:revoked_at:%d", userClaims.ID)
+			revokedAtStr, err := cache.Get(ctx, revokeKey)
+			if err == nil {
+				if revokedAt, err := strconv.ParseInt(revokedAtStr, 10, 64); err == nil {
+					if userClaims.IssuedAt < revokedAt {
+						logger.Warn(
+							"token expired due to role change",
+							slog.Int64("user_id", userClaims.ID),
+							slog.Int64("issued_at", userClaims.IssuedAt),
+							slog.Int64("revoked_at", revokedAt),
+						)
+						rh.ErrorResponse(core_errors.ErrUnauthorized, "session has been revoked, log in again")
+						return
+					}
+				}
+			}
+
 			ctx = core_ctx.SetUserID(ctx, userClaims.ID)
 			ctx = core_ctx.SetUserRole(ctx, userClaims.Role)
 			next.ServeHTTP(w, r.WithContext(ctx))

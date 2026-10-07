@@ -23,7 +23,7 @@ func (s *ExpensesService) CreateExpense(ctx context.Context, expense domain.Expe
 		return domain.Expense{}, fmt.Errorf("%s: %w", op, core_errors.ErrForbidden)
 	}
 
-	hasAccessToCat, err := s.catChecker.HasAccess(ctx, uid, expense.CategoryID)
+	hasAccessToCat, err := s.catChecker.HasAccess(ctx, uid, expense.CategoryID, expense.AccountID)
 	if err != nil {
 		return domain.Expense{}, fmt.Errorf("%s: check category access: %w", op, err)
 	}

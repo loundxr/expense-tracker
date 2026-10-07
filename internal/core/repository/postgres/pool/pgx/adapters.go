@@ -26,6 +26,17 @@ type pgxTx struct {
 	pgx.Tx
 }
 
+type txKey struct{}
+
+func injectTx(ctx context.Context, tx core_postgres_pool.Transaction) context.Context {
+	return context.WithValue(ctx, txKey{}, tx)
+}
+
+func extractTx(ctx context.Context) (core_postgres_pool.Transaction, bool) {
+	tx, ok := ctx.Value(txKey{}).(core_postgres_pool.Transaction)
+	return tx, ok
+}
+
 func (t *pgxTx) QueryRow(ctx context.Context, sql string, args ...any) core_postgres_pool.Row {
 	return pgxRow{
 		Row: t.Tx.QueryRow(ctx, sql, args...),
@@ -38,6 +49,26 @@ func (t *pgxTx) Exec(ctx context.Context, sql string, arguments ...any) (core_po
 		return tag, mapErrors(err)
 	}
 	return pgconnCommandTag{tag}, nil
+}
+
+func (p *Pool) WithinTransaction(ctx context.Context, fn func(txCtx context.Context) error) error {
+	const op = "core_pgx_pool.WithinTransacion"
+
+	tx, err := p.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("%s: begin tx: %w", op, err)
+	}
+	defer tx.Rollback(ctx)
+
+	txCtx := injectTx(ctx, tx)
+	if err := fn(txCtx); err != nil {
+		return err
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("%s: commit tx: %w", op, err)
+	}
+	return nil
 }
 
 func (t *pgxTx) Commit(ctx context.Context) error {

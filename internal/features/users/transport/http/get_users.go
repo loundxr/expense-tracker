@@ -7,7 +7,9 @@ import (
 	core_http_response "github.com/loundxr/expense-tracker/internal/core/transport/http/response"
 )
 
-type GetUsersResponse []UserDTOResponse
+type GetUsersResponse struct {
+	Users []UserDTOResponse `json:"users"`
+}
 
 func (h *UsersHTTPHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -31,6 +33,15 @@ func (h *UsersHTTPHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	usersDTO := GetUsersResponse(usersDTOFromDomains(users))
+	usersDTO := NewGetUsersResponse(usersDTOFromDomains(users))
 	rh.JSONResponse(usersDTO, http.StatusOK)
+}
+
+func NewGetUsersResponse(users []UserDTOResponse) GetUsersResponse {
+	if users == nil {
+		users = make([]UserDTOResponse, 0)
+	}
+	return GetUsersResponse{
+		Users: users,
+	}
 }

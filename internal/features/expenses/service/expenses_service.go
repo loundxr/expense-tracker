@@ -42,5 +42,5 @@ type AccountAccessChecker interface {
 }
 
 type CategoryAccessChecker interface {
-	HasAccess(ctx context.Context, uid, categoryID int64) (bool, error)
+	HasAccess(ctx context.Context, uid, categoryID, accountID int64) (bool, error)
 }

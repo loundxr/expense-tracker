@@ -30,7 +30,7 @@ func (s *ExpensesService) GetExpenses(
 	}
 
 	if filter.CategoryID != nil {
-		hasAccess, err := s.catChecker.HasAccess(ctx, uid, *filter.CategoryID)
+		hasAccess, err := s.catChecker.HasAccess(ctx, uid, *filter.CategoryID, filter.AccountID)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}

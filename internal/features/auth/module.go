@@ -26,7 +26,7 @@ type Module struct {
 
 func New(deps Dependencies) *Module {
 	repo := repository.NewUsersAuthRepository(deps.Pool)
-	svc := service.NewUsersAuthService(repo, deps.AccountCreator, deps.Logger, deps.JWTConfig)
+	svc := service.NewUsersAuthService(repo, deps.AccountCreator, deps.Pool, deps.Logger, deps.JWTConfig)
 	h := transport.NewUsersAuthHandler(svc, deps.Logger)
 
 	return &Module{

@@ -9,8 +9,9 @@ import (
 )
 
 type UserClaims struct {
-	ID   int64
-	Role string
+	ID       int64
+	Role     string
+	IssuedAt int64
 }
 
 func NewToken(user domain.User, secret string, ttl time.Duration) (string, error) {
@@ -54,9 +55,16 @@ func ParseToken(tokenString string, secret string) (UserClaims, error) {
 		if !ok {
 			return UserClaims{}, fmt.Errorf("role claim not found in token")
 		}
+
+		iatFloat, ok := claims["iat"].(float64)
+		if !ok {
+			return UserClaims{}, fmt.Errorf("issued_at claim not found in token")
+		}
+
 		return UserClaims{
-			ID:   int64(uidFloat),
-			Role: role,
+			ID:       int64(uidFloat),
+			Role:     role,
+			IssuedAt: int64(iatFloat),
 		}, nil
 	}
 

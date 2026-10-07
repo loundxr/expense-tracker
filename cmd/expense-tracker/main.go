@@ -70,6 +70,7 @@ func main() {
 	usersModule := users.New(users.Dependencies{
 		Pool:   pool,
 		Logger: logger,
+		Cache:  cache,
 	})
 
 	// account feature
@@ -125,7 +126,7 @@ func main() {
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.APIVersion1)
 	authModule.RegisterRoutes(apiVersionRouter.Router())
 	apiVersionRouter.Router().Group(func(r chi.Router) {
-		r.Use(core_http_middleware.Auth(jwtCfg.Secret, logger))
+		r.Use(core_http_middleware.Auth(jwtCfg.Secret, cache, logger))
 		usersModule.RegisterRoutes(r)
 		accountsModule.RegisterRoutes(r)
 		categoriesModule.RegisterRoutes(r)

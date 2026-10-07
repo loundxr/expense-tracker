@@ -40,52 +40,36 @@ The application follows a **Modular Monolith** pattern incorporating **Clean Arc
 
 ## Key Features
 
-### 1. Authentication & RBAC
-- **Secure Registration & Login**: Password hashing via `bcrypt` (default cost: 10).
-- **Stateless JWT Authorization**: Cryptographically signed HMAC-SHA256 tokens (`golang-jwt/jwt/v5`) containing `uid` and `role` claims with configurable TTL.
-- **Role-Based Access Control (RBAC)**: Distinct permissions for `user` and `admin` roles, enforced via lightweight middleware and service-level authorization guards.
-
-### 2. User Management
-- Full user profile lifecycle with administrative controls.
-- **Access Boundary Enforcement**: Regular users can only access and modify their own profile; administrators can manage any user.
-- **Independent Role Elevation**: Dedicated administrative endpoint (`PATCH /api/v1/users/{id}/role`) separated from profile editing to prevent privilege escalation.
-
-### 3. Accounts & Shared Budgets
-- **Multi-Wallet Support**: Create distinct accounts (e.g., "Personal", "Family Budget", "Travel").
-- **Automatic Default Account**: Automatically provisions a default "Personal" account upon initial user registration.
-- **Shared Access (Multi-User Collaboration)**: Account owners can grant (`POST /share`) or revoke (`DELETE /share`) access to other users via their email addresses, backed by a composite primary key in PostgreSQL (`account_users`).
-
-### 4. Categories (System & Custom)
-- **Hybrid Scoping**: Seamlessly combines system-wide default categories (`user_id IS NULL`, seeded via SQL migrations) with custom user-created categories (`user_id = uid`).
-- **Data Integrity Protection**: Regular users cannot alter or delete system categories; administrators maintain full moderation capabilities.
-
-### 5. Expenses & Financial Operations
-- **High-Precision Money Handling**: Financial amounts are stored as integer cents (`BIGINT`) in PostgreSQL to eliminate floating-point rounding errors (`0.1 + 0.2 != 0.3`). Values are converted to decimal format (`float64`) exclusively at the transport boundary.
-- **Strict Relationship Validation**: Expenses can only be charged to accounts the caller has verified access to, and categorized using accessible categories.
-- **Deterministic Filtering & Pagination**: Filter transactions by account, category, date range (`from` / `to` with timezone awareness), and paginated via `limit` and `offset`. Uses composite sorting (`ORDER BY date DESC, id DESC`) to eliminate pagination flicker.
-
-### 6. Real-Time Financial Analytics
-- **Financial Summary Dashboard**: Instant overview computing total expenditure, transaction counts, average purchase size, largest single purchase, and top spending category.
-- **Category Breakdown (Donut/Pie Chart Data)**: Single-pass SQL aggregation utilizing PostgreSQL window functions (`SUM(SUM(amount)) OVER()`) to compute the exact percentage share per category.
-- **Spending Trends (Bar/Line Chart Data)**: Time-series analysis aggregating expenses chronologically across configurable intervals (`day` or `month`) using PostgreSQL's `DATE_TRUNC`.
-- **Shared Budget Member Contribution**: Visual breakdown revealing the exact financial contribution and percentage of total expenditure for every member in a shared account.
+- **Authentication & RBAC:** User registration, login, and JWT-based authentication with `user` and `admin` roles.
+- **Cross-Feature Atomic Transactions:** User creation and default "Personal" wallet provisioning execute inside an atomic database transaction (`WithinTransaction`) — zero orphan users on failures.
+- **Dynamic Token Invalidation (Redis):** Immediate token revocation using Redis-backed timestamp checks (`iat`). If an admin is demoted, their existing tokens are rejected with `401 Unauthorized` instantly.
+- **Accounts & Shared Budgets:** Create wallets, share access with other users via email, and revoke permissions.
+- **Categories:** System default categories (seeded via migrations) + custom user categories.
+- **Expenses & Transactions:** Record spending with high-precision integer-cent math (`BIGINT` in DB) and atomic partial updates (`PATCH`) with defensive copying.
+- **Optimistic Locking:** Entity updates protected against concurrent edit collisions via a `version` column (`409 Conflict`).
+- **Standardized Response Envelopes:** All collection endpoints return structured JSON envelopes (e.g., `{"expenses": [...]}`) with constructor protection against `null` slices.
+- **Real-Time Financial Analytics:**
+  - **Summary Dashboard:** Total spending, average transaction, transaction count, largest purchase, top category.
+  - **Category Breakdown:** Aggregated spending per category with SQL window-function percentage shares (`SUM(SUM) OVER()`).
+  - **Spending Trends:** Chronological time series grouped by `day` or `month` via PostgreSQL `DATE_TRUNC`.
+  - **Members Contribution:** Spending distribution among participants of a shared account.
 
 ---
 
 ## Technical Stack
 
-| Component              | Technology                                                  | Purpose                                                |
-| :--------------------- | :---------------------------------------------------------- | :----------------------------------------------------- |
-| **Language**           | [Go 1.26.2](https://go.dev/)                                | Core runtime                                           |
-| **HTTP Router**        | [go-chi/chi v5](https://github.com/go-chi/chi)              | Fast, idiomatic, lightweight HTTP routing              |
-| **Database**           | [PostgreSQL 18.6](https://www.postgresql.org/)              | Relational ACID persistence                            |
-| **DB Driver & Pool**   | [pgx/v5 (pgxpool)](https://github.com/jackc/pgx)            | High-performance PostgreSQL driver and connection pool |
-| **Cache Store**        | [Redis 8+](https://redis.io/)                               | In-memory cache & future token invalidation store      |
-| **Migrations**         | [golang-migrate](https://github.com/golang-migrate/migrate) | Database schema version control                        |
-| **Config Loader**      | [envconfig](https://github.com/kelseyhightower/envconfig)   | Type-safe environment variable parsing                 |
-| **Structured Logging** | Standard Library `log/slog`                                 | High-performance JSON and pretty-printed logs          |
-| **Task Runner**        | [go-task/task](https://taskfile.dev/)                       | Cross-platform build and execution automation          |
-| **Containerization**   | Docker & Docker Compose                                     | Multi-stage containerized environment                  |
+| Component                   | Technology                                                  | Purpose                                                                              |
+| :-------------------------- | :---------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| **Language**                | [Go 1.26.2](https://go.dev/)                                | Core runtime                                                                         |
+| **HTTP Router**             | [go-chi/chi v5](https://github.com/go-chi/chi)              | Fast, idiomatic, lightweight HTTP routing                                            |
+| **Database**                | [PostgreSQL 18.6](https://www.postgresql.org/)              | Relational ACID persistence                                                          |
+| **DB Driver & Pool**        | [pgx/v5 (pgxpool)](https://github.com/jackc/pgx)            | High-performance PostgreSQL driver and connection pool                               |
+| **Cache Store**             | [Redis 8+](https://redis.io/)                               | In-memory cache & future token invalidation store                                    |
+| **Migrations**              | [golang-migrate](https://github.com/golang-migrate/migrate) | Database schema version control                                                      |
+| **Config Loader**           | [envconfig](https://github.com/kelseyhightower/envconfig)   | Type-safe environment variable parsing                                               |
+| **Structured Logging**      | Standard Library `log/slog`                                 | High-performance JSON and pretty-printed logs                                        |
+| **Security**                | `golang-jwt/jwt/v5`, `bcrypt`                               | Stateless JWT, password hashing                                                      |
+| **Automation & Containers** | Docker, Docker Compose, [Taskfile](https://taskfile.dev/)   | Multi-stage containerized environment, cross-platform build and execution automation |
 
 ---
 
@@ -147,9 +131,9 @@ The application follows a **Modular Monolith** pattern incorporating **Clean Arc
 ## Getting Started
 
 ### Prerequisites
-- **Go**: Version `1.26` or higher installed locally.
-- **Docker & Docker Compose**: Installed and running.
-- **Task**: Installed (`brew install go-task` on macOS or via [taskfile.dev](https://taskfile.dev/installation/)).
+- [Go 1.26+](https://go.dev/)
+- [Docker & Docker Compose](https://www.docker.com/)
+- [Task](https://taskfile.dev/)
 
 ### Environment Configuration
 Clone the repository and initialize your `.env` file:
@@ -189,14 +173,9 @@ JWT_TTL=24h
 Initialize the schema using the containerized migration tool:
 
 ```bash
-# Apply all pending migrations
-task migrate-up
-
-# Roll back the last migration
-task migrate-down
-
-# Check current migration version
-task migrate-version
+task migrate-up         # Apply all pending migrations
+task migrate-down       # Roll back the last migration
+task migrate-version    # Check current migration version
 ```
 
 ### Running the Application
@@ -209,20 +188,15 @@ task dev
 ```
 
 #### Mode 2: Full Dockerized Deployment (Production-like)
-Builds and runs all components (Go binary, PostgreSQL, Redis) inside an isolated Docker bridge network:
-
+Builds and runs all components inside isolated Docker containers:
 ```bash
-# Build and run all services
-task compose-up
-
-# Gracefully shut down and purge local application images
-task compose-down
+task compose-up       # Build & start all containers
+task compose-down     # Gracefully stop containers and purge local images
 ```
 
 #### Utility Commands
 ```bash
-# Clean up local log files with confirmation
-task logs-clean
+task logs-clean       # Clean up local log files with confirmation
 ```
 
 ### Testing with Postman
@@ -287,6 +261,9 @@ All protected endpoints require the HTTP header:
 
 Planned improvements for upcoming iterations:
 
-- [ ] **Cross-Feature Database Transactions:** Wrap `User` creation and default `Account` provisioning in a single atomic database transaction (`WithinTransaction`).
-- [ ] **Dynamic Token Invalidation via Redis:** Invalidate active JWTs upon role downgrade using Redis-backed timestamp checks (`iat`).
-- [ ] **Multi-Currency & Exchange Rates:** Integrate an external exchange rate API and cache conversion rates in Redis (1h TTL).
+- [ ] **Interactive Swagger / OpenAPI Specification:**
+  - Generate automated OpenAPI v2/v3 documentation using [swaggo/swag](https://github.com/swaggo/swag).
+  - Expose an interactive Swagger UI directly from the server at `/swagger/index.html`.
+- [ ] **External Currency Exchange Rates API & Redis Caching:**
+  - Integrate an external exchange rate API (e.g., ExchangeRate-API).
+  - Cache real-time conversion rates in Redis with a 1-hour TTL to enable multi-currency balance reporting.
